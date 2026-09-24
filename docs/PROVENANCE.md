@@ -375,3 +375,24 @@ with two columns:
 | `src/test/java/com/gtnewhorizon/gtnhlib/config/ConfigurationManagerTest.java` | native on 1.12.2: Forge's @Config and ConfigManager. It tests `config/` |
 | `src/test/java/com/gtnewhorizon/gtnhlib/test/util/ExponentialFormatTest.java` | 1.7.10-only: tests `util/numberformatting/` |
 | `src/test/java/com/gtnewhorizon/gtnhlib/test/util/NumberFormatUtilTest.java` | 1.7.10-only: tests `util/numberformatting/` |
+
+### drop(game-api)
+
+| File | Reason |
+|---|---|
+| `src/main/java/com/gtnewhorizon/gtnhlib/eventbus/` | native on 1.12.2: Forge's @Mod.EventBusSubscriber |
+| `src/main/java/com/gtnewhorizon/gtnhlib/event/PickBlockEvent.java` | 1.7.10-only: posted by a dropped mixin. 1.12.2 has no counterpart |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/event/LivingEquipmentChangeEvent.java` | native on 1.12.2: Forge's LivingEquipmentChangeEvent |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/event/RenderTooltipEvent.java` | native on 1.12.2: Forge's RenderTooltipEvent |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/event/WorldDeletionEvent.java` | 1.7.10-only: posted by a dropped mixin. 1.12.2 has no counterpart |
+| `src/main/java/com/gtnewhorizon/gtnhlib/network/` | 1.7.10-only: GTNHLib's network channel and its packets |
+| `src/main/java/com/gtnewhorizon/gtnhlib/commands/CommandResourcePack.java` | 1.7.10-only: the client command of the resource-pack updater |
+| `src/main/java/com/gtnewhorizon/gtnhlib/commands/GTNHClientCommand.java` | 1.7.10-only: the base class of GTNHLib's client commands |
+| `src/main/java/com/gtnewhorizon/gtnhlib/commands/ItemInHandCommand.java` | 1.7.10-only: the /iteminhand client command |
+| `src/main/java/com/gtnewhorizon/gtnhlib/commands/TitleCommand.java` | native on 1.12.2: vanilla /title |
+| `src/main/java/com/gtnewhorizon/gtnhlib/brigadier/BrigadierApi.java` | 1.7.10-only: 1.12.2 has no Brigadier |
+| `src/main/java/com/gtnewhorizon/gtnhlib/chat/` | 1.7.10-only: custom chat components |
+| `src/main/java/com/gtnewhorizon/gtnhlib/keybind/` | 1.7.10-only: server-synced keybindings |
+| `src/main/java/com/gtnewhorizon/gtnhlib/gamerules/` | 1.7.10-only: a game-rule registry |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/title/TitleAPI.java` | native on 1.12.2: vanilla titles, through GuiIngame.displayTitle and SPacketTitle |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/VillagerNames.java` | 1.7.10-only: villager profession names, moved from WAWLA |
