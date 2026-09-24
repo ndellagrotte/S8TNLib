@@ -21,7 +21,7 @@ S8TNLib ports [GTNHLib](https://github.com/GTNewHorizons/GTNHLib) to Minecraft
   labeled commit per subsystem, and recorded in the [drop ledger](#drop-ledger).
 - **The syncline is exact.** At the syncline, every kept main file is
   byte-identical to Demonica's copy and every kept test to its source. A
-  blob-SHA audit proves it.
+  [blob-SHA audit](#scopes-and-audits) proves it.
 
 ## Base and syncline
 
@@ -97,6 +97,64 @@ Files keep their package, `com.gtnewhorizon.gtnhlib`, so a path below these
 roots names the same file in every tree. Upstream's 50 resources have no
 counterpart, since none of them is kept. Before `3d0db995`, Demonica kept
 GTNHLib in `vendor/GTNHLib`.
+
+## Scopes and audits
+
+`scripts/provenance_audit.py` classifies every file in a scope by git blob SHA
+against a baseline:
+
+| Class | Meaning |
+|---|---|
+| **verbatim** | byte-identical to the baseline |
+| **adapted** | in both trees, content differs |
+| **new** | only in the compared tree |
+| **dropped** | only in the baseline |
+
+It knows where each scope lives in four layouts: `upstream` (the default
+baseline), `actinium`, `demonica` (from `3d0db995` on) and `s8tnlib` (the
+default compared tree, at `HEAD`). A file is keyed by its path below the
+scope's root, so it matches across layouts.
+
+| Scope | Files | Layouts |
+|---|---|---|
+| `gtnhlib` | the 60 kept main files, `KEPT` in the script | all four |
+| `tests` | Actinium's `MemoryUtilitiesTest` and `TessellatorManagerTest` | `upstream`, `actinium`, `s8tnlib` |
+| `upstream-tests` | upstream's `VertexFormatTest`, while it is kept | `upstream`, `s8tnlib` |
+| `main` | every main source file, for the classification manifest | all four |
+
+- `gtnhlib`, `tests` and `upstream-tests` restrict both sides to the same
+  paths, so `--expect-identical` ignores whatever else a tree carries.
+- Demonica never vendored GTNHLib's tests, so `tests` is audited against
+  Actinium only.
+- `--ledger` checks the [drop ledger](#drop-ledger), as committed at
+  `--b-ref`, against that tree. Every upstream file under `src/` that the tree
+  lacks must have exactly one row, and every row must name a base file that
+  the tree lacks. So the `main` scope's dropped list equals the ledger. Every
+  commit keeps this check passing.
+- `--b-ref INDEX` audits staged files before they are committed.
+
+```sh
+ACT=4a19c95952cb9710211d29bec3440e752b6a2d03
+DEM=61fa479dcfd00e39b92bdeb84f03c5ec693f6a6f
+
+# Gate 1, at the Actinium checkpoint: the kept files and tests equal Actinium's.
+scripts/provenance_audit.py --scope gtnhlib --a-ref $ACT --a-layout actinium --expect-identical
+scripts/provenance_audit.py --scope tests --a-ref $ACT --a-layout actinium --expect-identical
+
+# Gate 2, at the syncline: the kept files equal Demonica's.
+scripts/provenance_audit.py --scope gtnhlib --a-ref $DEM --a-layout demonica --expect-identical
+
+# VertexFormatTest is still upstream's.
+scripts/provenance_audit.py --scope upstream-tests --expect-identical
+
+# What S8TNLib changed relative to the base, and the ledger check, on staged
+# files before a commit and on HEAD after it:
+scripts/provenance_audit.py --scope main --b-ref INDEX --ledger
+scripts/provenance_audit.py --scope main --ledger
+
+# What Actinium changed relative to the base:
+scripts/provenance_audit.py --scope main --b-ref $ACT --b-layout actinium
+```
 
 ## Branches
 
@@ -218,5 +276,8 @@ with two columns:
   - **Removed by Actinium:** `removed by actinium@<sha>`. These are the 9 files
     that Actinium's dead-code commits deleted (`b6c98b8b`, `1a65c496`,
     `303b9789`). Restore the last 1.12.2 version from that commit's parent.
+
+`scripts/provenance_audit.py --ledger` checks the rows against the tree
+([Scopes and audits](#scopes-and-audits)).
 
 Nothing has been dropped yet.
