@@ -7,13 +7,12 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.client.renderer.Tessellator;
-
 import org.joml.Matrix4fc;
 import org.joml.Vector3f;
 
 import com.gtnewhorizon.gtnhlib.client.renderer.cel.model.quad.ModelQuadView;
 import com.gtnewhorizon.gtnhlib.client.renderer.cel.model.quad.ModelQuadViewMutable;
+import com.gtnewhorizon.gtnhlib.client.renderer.DirectTessellator;
 
 import it.unimi.dsi.fastutil.objects.ObjectImmutableList;
 import lombok.Getter;
@@ -174,7 +173,7 @@ public class VertexFormat {
         return pointer;
     }
 
-    public final long writeToBuffer0(long pointer, Tessellator tessellator, float x, float y, float z) {
+    public final long writeToBuffer0(long pointer, DirectTessellator tessellator, float x, float y, float z) {
         // Position
         memPutFloat(pointer, x);
         memPutFloat(pointer + 4, y);
@@ -193,7 +192,7 @@ public class VertexFormat {
      * Populate the passed-in Tessellator with the data of the buffer. Position data needs to be read before calling
      * this method.
      */
-    public final long readFromBuffer0(long pointer, Tessellator tessellator) {
+    public final long readFromBuffer0(long pointer, DirectTessellator tessellator) {
         final List<VertexFormatElement> list = this.getElements();
         final int listSize = list.size();
         for (int i = 1; i < listSize; i++) {

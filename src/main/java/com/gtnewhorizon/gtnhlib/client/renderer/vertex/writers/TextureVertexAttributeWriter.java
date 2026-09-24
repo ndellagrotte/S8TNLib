@@ -3,7 +3,7 @@ package com.gtnewhorizon.gtnhlib.client.renderer.vertex.writers;
 import static com.gtnewhorizon.gtnhlib.bytebuf.MemoryUtilities.*;
 import static com.gtnewhorizon.gtnhlib.client.renderer.cel.util.ModelQuadUtil.*;
 
-import net.minecraft.client.renderer.Tessellator;
+import com.gtnewhorizon.gtnhlib.client.renderer.DirectTessellator;
 
 public final class TextureVertexAttributeWriter implements IVertexAttributeWriter {
 
@@ -15,16 +15,15 @@ public final class TextureVertexAttributeWriter implements IVertexAttributeWrite
     }
 
     @Override
-    public int writeAttribute(long pointer, Tessellator tessellator) {
-        memPutFloat(pointer, (float) tessellator.textureU);
-        memPutFloat(pointer + 4, (float) tessellator.textureV);
+    public int writeAttribute(long pointer, DirectTessellator tessellator) {
+        memPutFloat(pointer, (float) tessellator.getLastTextureU());
+        memPutFloat(pointer + 4, (float) tessellator.getLastTextureV());
         return 8;
     }
 
     @Override
-    public int readAttribute(long pointer, Tessellator tessellator) {
-        tessellator.textureU = memGetFloat(pointer);
-        tessellator.textureV = memGetFloat(pointer + 4);
+    public int readAttribute(long pointer, DirectTessellator tessellator) {
+        tessellator.setLastTextureUVRaw(memGetFloat(pointer), memGetFloat(pointer + 4));
         return 8;
     }
 }

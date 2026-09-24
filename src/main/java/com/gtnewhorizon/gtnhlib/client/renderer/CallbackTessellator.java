@@ -2,14 +2,12 @@ package com.gtnewhorizon.gtnhlib.client.renderer;
 
 import java.nio.ByteBuffer;
 
-import net.minecraft.client.renderer.Tessellator;
-
 public final class CallbackTessellator extends DirectTessellator {
 
     private DirectDrawCallback drawCallback;
 
     public CallbackTessellator(DirectDrawCallback callback) {
-        super(Tessellator.byteBuffer);
+        super(TessellatorManager.DEFAULT_BUFFER_SIZE);
         this.drawCallback = callback;
     }
 
@@ -33,7 +31,7 @@ public final class CallbackTessellator extends DirectTessellator {
     @Override
     public int draw() {
         final int result = super.draw();
-        if (drawCallback.onDraw(this)) {
+        if (drawCallback != null && drawCallback.onDraw(this)) {
             this.reset();
         }
         return result;

@@ -3,7 +3,7 @@ package com.gtnewhorizon.gtnhlib.client.renderer.vertex.writers;
 import static com.gtnewhorizon.gtnhlib.bytebuf.MemoryUtilities.*;
 import static com.gtnewhorizon.gtnhlib.client.renderer.cel.util.ModelQuadUtil.*;
 
-import net.minecraft.client.renderer.Tessellator;
+import com.gtnewhorizon.gtnhlib.client.renderer.DirectTessellator;
 
 public final class LightVertexAttributeWriter implements IVertexAttributeWriter {
 
@@ -14,14 +14,14 @@ public final class LightVertexAttributeWriter implements IVertexAttributeWriter 
     }
 
     @Override
-    public int writeAttribute(long pointer, Tessellator tessellator) {
-        memPutInt(pointer, tessellator.brightness);
+    public int writeAttribute(long pointer, DirectTessellator tessellator) {
+        memPutInt(pointer, tessellator.getPackedBrightness());
         return 4;
     }
 
     @Override
-    public int readAttribute(long pointer, Tessellator tessellator) {
-        tessellator.brightness = memGetInt(pointer);
+    public int readAttribute(long pointer, DirectTessellator tessellator) {
+        tessellator.setPackedBrightnessRaw(memGetInt(pointer));
         return 4;
     }
 }
