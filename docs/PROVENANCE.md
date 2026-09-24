@@ -1,0 +1,222 @@
+# S8TNLib Provenance
+
+S8TNLib ports [GTNHLib](https://github.com/GTNewHorizons/GTNHLib) to Minecraft
+1.12.2 on Cleanroom as a series of reviewable commits. Its base is upstream
+`9644810c0041584a9c6b80855d64c5766b6d1e1e`, release `0.9.59` (tag
+`gtnhlib-base/9644810c00`).
+
+## Charter
+
+- **Demonica is the only consumer.**
+  [Demonica](https://github.com/ndellagrotte/Demonica) merges the S8TNLib jar
+  into its mod jar and remaps the result.
+- **The code comes from Actinium.** The `GTNHLib/` project of
+  [Actinium](https://github.com/DHJComical/Actinium) is the only 1.12.2 port
+  of GTNHLib. Actinium imported it in one commit, together with unrelated work
+  (`actinium@83ea1b7c`), and kept changing it afterwards. S8TNLib replays that
+  work theme by theme, and each commit names the Actinium commits it ports.
+- **What Demonica doesn't reach is dropped.** S8TNLib keeps the 60 main files
+  that Demonica's code reaches, Actinium's 2 GTNHLib tests, and upstream's
+  `VertexFormatTest` if it passes unmodified. Everything else is dropped, one
+  labeled commit per subsystem, and recorded in the [drop ledger](#drop-ledger).
+- **The syncline is exact.** At the syncline, every kept main file is
+  byte-identical to Demonica's copy and every kept test to its source. A
+  blob-SHA audit proves it.
+
+## Base and syncline
+
+| | Commit | Main-source tree |
+|---|---|---|
+| Base: upstream, tag `gtnhlib-base/9644810c00` | `9644810c0041584a9c6b80855d64c5766b6d1e1e` | `957d7b98e3c89b10d76ab6961054faf3364812d3` (390 files) |
+| Checkpoint: `actinium@4a19c959` | `4a19c95952cb9710211d29bec3440e752b6a2d03` | `e8032ad587e60b027eaac63781318dd245344976` (90) |
+| Syncline: `demonica@61fa479d`, Demonica tag `s8tnlib-source/61fa479d` | `61fa479dcfd00e39b92bdeb84f03c5ec693f6a6f` | `2dcfcfc8e387eae6435b2fbf9606d30879259388` (90) |
+
+Demonica forked from Actinium at `4a19c959`. The syncline's GTNHLib equals
+Actinium's at that commit, except for two Demonica edits:
+
+- `compat/Mods.java`, blob `47f3c8babea36dda267bdcda00edee5e60c0dd63`
+  (Actinium's is `6138185af69e84d581f55c0e6a64f4d6027cca04`), from
+  `demonica@1511a6bd4c8960578f3ef575449de289159a6c97`. It adds the
+  `LITTLETILES` flag, and its javadoc says "a Demonica compat class".
+- `util/font/IFontParameters.java`, blob
+  `caf04d57d4312654ad1ab79ce6aa0af2d01efeb5` (Actinium's is
+  `970ed03e716e221a614a6ebb3a773963e987cdb3`), from
+  `demonica@3d0db9950bd52411f05b859400bf1b576e83b851`. It renames the
+  `actinium$` method prefixes to `demonica$`.
+
+The port first reaches Actinium's content, tagged
+`actinium-checkpoint/4a19c959`. The two Demonica edits then land last, in a
+commit of their own.
+
+## What is kept
+
+Demonica's code outside `GTNHLib/` (its root, `glsm` and `shader` projects)
+names 24 GTNHLib classes. Following their imports and same-package references
+reaches 59 classes, and `bytebuf/package-info` makes 60 files. Actinium's code
+at `4a19c959` reaches the same 60.
+
+| Against upstream | Kept | Dropped as unreachable |
+|---|---|---|
+| verbatim | 28 | 12 |
+| adapted | 29 | 18 |
+| new in Actinium: `RuntimeOptionsBridge`, `PostProcessingBridge`, `DepthTextureProvider` | 3 | 0 |
+| total | 60 | 30 |
+
+- Four kept files, `ModelQuadFlags`, `ColorABGR`, `ColorU8` and
+  `cel/util/MathUtil`, are needed only because `ModelQuadView` and
+  `ModelQuadViewMutable` import `ModelQuadFlags` for a javadoc link.
+- The 30 unreachable files are referenced only by each other:
+  - the post-processing pipeline (9): `CustomFramebuffer`,
+    `I3DGeometryRenderer`, `PostProcessingHelper`, `PostProcessingManager`,
+    `SharedDepthFramebuffer`, `shaders/{BloomShader,BloomTonemapShader,
+    PostProcessingRenderer,UniversiumShader}`;
+  - `client/renderer/shader/**` (3) and `client/renderer/textures/**` (4);
+  - 7 `cel` classes: `ColorARGB`, `ColorMixer`, `ModelLine`,
+    `ModelQuadOrientation`, `ModelQuadWinding`, `ModelTriangle`,
+    `polyfill/Maps`;
+  - stubs and leftovers (7): `GTNHLib`, `ClientProxy`, `core/GTNHLibCore`,
+    `blockpos/BlockPos`, `stacks/Vector3dStack`, `vbo/IModelCustomExt`,
+    `util/ObjectPooler`.
+- `PostProcessingBridge` stays although its pipeline goes. Demonica's Iris tree
+  reads the lightmap and night-vision values through it, and
+  `com.demonica.Demonica` sets its providers.
+- Two kept types serve only Demonica, and nothing inside GTNHLib uses them:
+  `compat/Mods` (used by 10 root and 2 `shader` files) and
+  `util/font/IFontParameters` (implemented by `MixinFontRenderer`).
+
+## Path map
+
+| Tree | Main sources | Tests |
+|---|---|---|
+| upstream GTNHLib | `src/main/java` (390 files), `src/main17/java` (4) | `src/test/java` (14) |
+| Actinium, project `:GTNHLib` | `GTNHLib/src/main/java` (90) | `GTNHLib/src/test/java` (2) |
+| Demonica since `3d0db995`, project `:GTNHLib` | `GTNHLib/src/main/java` (90) | none |
+| S8TNLib | `src/main/java` | `src/test/java` |
+
+Files keep their package, `com.gtnewhorizon.gtnhlib`, so a path below these
+roots names the same file in every tree. Upstream's 50 resources have no
+counterpart, since none of them is kept. Before `3d0db995`, Demonica kept
+GTNHLib in `vendor/GTNHLib`.
+
+## Branches
+
+| Branch | Role |
+|---|---|
+| `master` | mirror of upstream `master`; nothing is committed to it |
+| `dev` | buildable states only; tracks `origin/dev` |
+| `main` | blessed states: it only fast-forwards to a tagged release |
+| `port/1.12.2-cleanroom` | the port series, merged to `dev` at the syncline |
+| `sync/demonica-<sha>` | a later Demonica change to GTNHLib, until it merges |
+
+## Remotes
+
+| Remote | Repository | Use |
+|---|---|---|
+| `origin` | https://github.com/ndellagrotte/S8TNLib | S8TNLib itself |
+| `upstream` | https://github.com/GTNewHorizons/GTNHLib | fetch only |
+| `actinium` | https://github.com/DHJComical/Actinium, or a local clone | fetch only, no tags |
+| `demonica` | https://github.com/ndellagrotte/Demonica, or a local clone | fetch only; of its tags, only `s8tnlib-source/*`, as `demonica/tags/s8tnlib-source/*` |
+
+Audits and diffs read the other trees' objects locally, so the three read-only
+remotes only need fetching, and their push URL is `DISABLED`. Actinium's and
+Demonica's tags stay out of S8TNLib's tag namespace, because Demonica carries
+Angelica's version tags, and those collide with upstream's (`0.0.1` is in
+both).
+
+```sh
+git remote add upstream https://github.com/GTNewHorizons/GTNHLib.git
+git remote add actinium https://github.com/DHJComical/Actinium.git
+git remote add demonica https://github.com/ndellagrotte/Demonica.git
+for r in upstream actinium demonica; do git remote set-url --push "$r" DISABLED; done
+git config remote.actinium.tagOpt --no-tags
+git config remote.demonica.tagOpt --no-tags
+git config --add remote.demonica.fetch \
+    'refs/tags/s8tnlib-source/*:refs/remotes/demonica/tags/s8tnlib-source/*'
+git fetch --multiple upstream actinium demonica
+```
+
+## Tags
+
+| Tag | Repository | Marks |
+|---|---|---|
+| `gtnhlib-base/9644810c00` | S8TNLib | the base |
+| `s8tnlib-source/61fa479d` | Demonica | the syncline. It keeps `61fa479d`, `1511a6bd` and `3d0db995` reachable if Demonica's history is rewritten, and is pushed only with the maintainer's go-ahead |
+| `actinium-checkpoint/4a19c959` | S8TNLib | the commit whose kept files and tests equal Actinium's |
+| `demonica-syncline/61fa479d` | S8TNLib | the merge to `dev` whose kept files equal Demonica's |
+| `v<version>` | S8TNLib | a release, such as `v0.1.0` |
+
+Release tags start with `v` because upstream's version tags, `0.1.0` among
+them, are already in this repository. The Maven coordinates are
+`com.s8tnlib:s8tnlib`, at `0.1.0-SNAPSHOT` during the port and `0.1.0` at the
+syncline.
+
+## Commits
+
+- Subjects start with `build:`, `port(<area>):`, `drop(<subsystem>):`,
+  `docs:`, `tools:` or `ci:`. Bodies are bulleted.
+- A mechanical commit calls out every hunk in it that is not mechanical.
+- A commit that changes files the build does not compile yet says which
+  commit first compiles them.
+- Trailers record where the content came from:
+  - `Ported-From: actinium@<full sha>` or `Ported-From: demonica@<full sha>`,
+    one per source commit;
+  - `Baseline: gtnhlib-base/9644810c00` where the change is measured against
+    the base.
+
+`git log --grep=Ported-From` lists the ported commits.
+
+## Rules
+
+- **Never rename `com.gtnewhorizon.gtnhlib`.** Blob identity with Actinium's
+  and Demonica's copies depends on it. Demonica also matches the package name
+  as a string: `GLSMRedirector` in its `UNIVERSAL_VAO` constant and its
+  `com.gtnewhorizon.gtnhlib.asm` exclusion, `DisplayListManager` in
+  `startsWith("com.gtnewhorizon.gtnhlib.")`, and `verifyDistributedJar` in its
+  required entries.
+- **Write kept files from git objects,** as in
+  `git show <sha>:GTNHLib/src/main/java/<file> > src/main/java/<file>`, and
+  never save one through an editor. `.editorconfig` trims trailing whitespace,
+  and `ColorU8` has two lines of it.
+- **No formatter in the build.** Formatting would break blob identity.
+- **Read Demonica through refs, never through its working tree.** Other work
+  happens in Demonica's checkout, which may be on any branch.
+- **Port only what is kept.** A dropped file goes at its upstream content and
+  is never ported, and code that Actinium later deleted never lands.
+
+## Open: license
+
+GTNHLib is LGPL-3.0 (`LICENSE.txt`). Actinium's `THIRD_PARTY_NOTICES.md` lists
+its `GTNHLib/` as LGPL-3.0, and Demonica's notices label the same code
+LGPL-3.0. But Actinium's repository `LICENSE` is GPL-3.0, and Demonica treats
+its mod jar, which combines this code with Actinium's root project, as
+GPL-3.0. Nothing states which of the two licenses covers Actinium's changes to
+GTNHLib, and the port carries those changes into S8TNLib's adapted and new
+files.
+
+Pushing S8TNLib counts as distributing it. Before it is pushed, or published
+beyond `mavenLocal`, S8TNLib must take Demonica's position or state the
+conflict in its notices.
+
+## Drop ledger
+
+Every upstream file that S8TNLib drops gets a row here, added by the commit
+that removes it. The ledger is the last section of this file, so that commit
+appends a heading with its subject, such as `### drop(mixins)`, and a table
+with two columns:
+
+- **File:** the path at the base, in backticks, such as
+  `src/main/java/com/gtnewhorizon/gtnhlib/…`. A path ending in `/` stands for
+  a directory dropped as a whole.
+- **Reason:** one of the reasons below, which also says where to restore the
+  file from. A short explanation may follow it.
+  - **Not in Actinium's set:** `1.7.10-only`, or `native on 1.12.2: <what
+    replaces it>`. Restore it from `gtnhlib-base/9644810c00`. This includes
+    `api/CapturingTesselator`, which Actinium never imported.
+  - **In Actinium's set, unreachable from Demonica:** `unreachable from
+    Demonica`. Restore the 1.12.2 version from `actinium@4a19c959`, under
+    `GTNHLib/`.
+  - **Removed by Actinium:** `removed by actinium@<sha>`. These are the 9 files
+    that Actinium's dead-code commits deleted (`b6c98b8b`, `1a65c496`,
+    `303b9789`). Restore the last 1.12.2 version from that commit's parent.
+
+Nothing has been dropped yet.
