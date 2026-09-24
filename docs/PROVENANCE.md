@@ -361,3 +361,17 @@ with two columns:
 | `src/main/java/com/gtnewhorizon/gtnhlib/itemrendering/` | native on 1.12.2: layered JSON item models. It is built on Forge's IItemRenderer, which 1.12.2 doesn't have |
 | `src/main/java/com/gtnewhorizon/gtnhlib/util/ItemRenderUtil.java` | native on 1.12.2: layered JSON item models. It is built on Forge's IItemRenderer, which 1.12.2 doesn't have |
 | `src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/vbo/IModelCustomExt.java` | unreachable from Demonica: the VBO interface that an upstream mixin adds to Forge's WavefrontObject |
+
+### drop(config)
+
+| File | Reason |
+|---|---|
+| `src/main/java/com/gtnewhorizon/gtnhlib/config/` | native on 1.12.2: Forge's @Config and ConfigManager |
+| `src/main/java/com/gtnewhorizon/gtnhlib/ExampleConfig.java` | native on 1.12.2: Forge's @Config and ConfigManager. An example of `config/` |
+| `src/main/java/com/gtnewhorizon/gtnhlib/eventhandlers/ConfigEventHandler.java` | native on 1.12.2: Forge's @Config and ConfigManager. It reloads settings on ConfigChangedEvent |
+| `src/main/java/com/gtnewhorizon/gtnhlib/GTNHLibConfig.java` | 1.7.10-only: settings of features that the port drops |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/numberformatting/` | 1.7.10-only: number formatting, set through GTNHLib's @Config. Nothing kept uses it |
+| `src/main/resources/assets/gtnhlib/lang/` | 1.7.10-only: translations for dropped features. Of en_US's 123 keys, 83 are villager names, 28 chat-component strings, 5 /title strings, 4 config GUI strings and 3 test-block names |
+| `src/test/java/com/gtnewhorizon/gtnhlib/config/ConfigurationManagerTest.java` | native on 1.12.2: Forge's @Config and ConfigManager. It tests `config/` |
+| `src/test/java/com/gtnewhorizon/gtnhlib/test/util/ExponentialFormatTest.java` | 1.7.10-only: tests `util/numberformatting/` |
+| `src/test/java/com/gtnewhorizon/gtnhlib/test/util/NumberFormatUtilTest.java` | 1.7.10-only: tests `util/numberformatting/` |
