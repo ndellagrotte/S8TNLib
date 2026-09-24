@@ -396,3 +396,23 @@ with two columns:
 | `src/main/java/com/gtnewhorizon/gtnhlib/gamerules/` | 1.7.10-only: a game-rule registry |
 | `src/main/java/com/gtnewhorizon/gtnhlib/client/title/TitleAPI.java` | native on 1.12.2: vanilla titles, through GuiIngame.displayTitle and SPacketTitle |
 | `src/main/java/com/gtnewhorizon/gtnhlib/client/VillagerNames.java` | 1.7.10-only: villager profession names, moved from WAWLA |
+
+### drop(items)
+
+| File | Reason |
+|---|---|
+| `src/main/java/com/gtnewhorizon/gtnhlib/item/` | native on 1.12.2: Forge capabilities and IItemHandler |
+| `src/main/java/com/gtnewhorizon/gtnhlib/capability/` | native on 1.12.2: Forge capabilities and IItemHandler |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/data/BlockMeta.java` | 1.7.10-only: block and item value types built on 1.7.10 metadata |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/data/BlockSupplier.java` | 1.7.10-only: block and item value types built on 1.7.10 metadata |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/data/ImmutableBlockMeta.java` | 1.7.10-only: block and item value types built on 1.7.10 metadata |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/data/ImmutableItemMeta.java` | 1.7.10-only: block and item value types built on 1.7.10 metadata |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/data/ItemId.java` | 1.7.10-only: block and item value types built on 1.7.10 metadata |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/data/ItemMeta.java` | 1.7.10-only: block and item value types built on 1.7.10 metadata |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/data/ItemStackSupplier.java` | 1.7.10-only: block and item value types built on 1.7.10 metadata |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/data/ItemSupplier.java` | 1.7.10-only: block and item value types built on 1.7.10 metadata |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/data/LazyBlock.java` | 1.7.10-only: block and item value types built on 1.7.10 metadata |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/data/LazyItem.java` | 1.7.10-only: block and item value types built on 1.7.10 metadata |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/data/IMod.java` | 1.7.10-only: an interface for mod enums, used by LazyBlock and LazyItem |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/map/ItemStackMap.java` | 1.7.10-only: an ItemStack-keyed map, adapted from NotEnoughItems |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/ItemUtil.java` | 1.7.10-only: item-transfer helpers for `item/` |
