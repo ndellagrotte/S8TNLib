@@ -255,7 +255,7 @@ syncline.
 - **Port only what is kept.** A dropped file goes at its upstream content and
   is never ported, and code that Actinium later deleted never lands.
 
-## Open: license
+## License
 
 GTNHLib is LGPL-3.0 (`LICENSE.txt`). Actinium's `THIRD_PARTY_NOTICES.md` lists
 its `GTNHLib/` as LGPL-3.0, and Demonica's notices label the same code
@@ -265,11 +265,14 @@ GPL-3.0. Nothing states which of the two licenses covers Actinium's changes to
 GTNHLib, and the port carries those changes into S8TNLib's adapted and new
 files.
 
-Pushing S8TNLib counts as distributing it. Before it is pushed, or published
-beyond `mavenLocal`, S8TNLib must take Demonica's position or state the
-conflict in its notices.
-[`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md) states it, and
-pushing still waits for the maintainer's decision.
+Pushing S8TNLib counts as distributing it, so the question had to be settled
+first. On 2026-09-24 the maintainer decided that S8TNLib is distributed under
+GPL-3.0 ([`COPYING`](../COPYING)), the license of Demonica's combined jar.
+That holds whichever license covers Actinium's changes: LGPL-3.0 is GPL-3.0
+plus additional permissions, which section 7 of GPL-3.0 lets a redistributor
+remove. `LICENSE.txt` stays as GTNHLib's license, and file headers still
+govern their files ([`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md)).
+The decision came after `v0.1.0`, whose tree still calls the question open.
 
 ## Port frontier
 

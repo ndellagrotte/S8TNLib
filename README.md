@@ -47,7 +47,8 @@ was built from.
 
 ## License
 
-GTNHLib is LGPL-3.0 ([`LICENSE.txt`](LICENSE.txt)). Whether LGPL-3.0 or
-GPL-3.0 covers Actinium's changes is an open question, which
-[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) explains. Until it is
-settled, S8TNLib is published to `mavenLocal` only.
+S8TNLib is distributed under GPL-3.0 ([`COPYING`](COPYING)). GTNHLib's code
+is LGPL-3.0 ([`LICENSE.txt`](LICENSE.txt)), which may be conveyed under
+GPL-3.0. GPL-3.0 also covers Actinium's changes, whichever of the two
+licenses they carry. The LWJGL- and ASM-derived files keep their BSD notices.
+[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) has the details.
