@@ -3,8 +3,10 @@
  */
 package com.gtnewhorizon.gtnhlib.bytebuf;
 
-import java.lang.reflect.Constructor;
 import java.nio.ByteBuffer;
+import java.util.Objects;
+
+import org.lwjgl.system.MemoryUtil;
 
 /**
  * Simple index checks.
@@ -18,10 +20,13 @@ public final class CheckIntrinsics {
     private CheckIntrinsics() {}
 
     public static int classVersion() {
-        return 8;
+        return Runtime.version().feature() >= 17 ? 17 : 8;
     }
 
     public static int checkIndex(int index, int length) {
+        if (Runtime.version().feature() >= 9) {
+            return Objects.checkIndex(index, length);
+        }
         if (index < 0 || length <= index) {
             throw new IndexOutOfBoundsException();
         }
@@ -29,6 +34,9 @@ public final class CheckIntrinsics {
     }
 
     public static int checkFromToIndex(int fromIndex, int toIndex, int length) {
+        if (Runtime.version().feature() >= 9) {
+            return Objects.checkFromToIndex(fromIndex, toIndex, length);
+        }
         if (fromIndex < 0 || toIndex < fromIndex || length < toIndex) {
             throw new IndexOutOfBoundsException();
         }
@@ -36,6 +44,9 @@ public final class CheckIntrinsics {
     }
 
     public static int checkFromIndexSize(int fromIndex, int size, int length) {
+        if (Runtime.version().feature() >= 9) {
+            return Objects.checkFromIndexSize(fromIndex, size, length);
+        }
         if ((length | fromIndex | size) < 0 || length - fromIndex < size) {
             throw new IndexOutOfBoundsException();
         }
@@ -43,21 +54,11 @@ public final class CheckIntrinsics {
     }
 
     public static ByteBuffer NewDirectByteBuffer(long address, int capacity) {
-        try {
-            // Should work on OpenJDK 8 and OpenJ9 8
-            @SuppressWarnings("unchecked")
-            final Class<? extends ByteBuffer> dbb = (Class<? extends ByteBuffer>) Class
-                    .forName("java.nio.DirectByteBuffer");
-            final Constructor<? extends ByteBuffer> newDbb = dbb.getDeclaredConstructor(long.class, int.class);
-            newDbb.setAccessible(true);
-            return newDbb.newInstance(address, capacity);
-        } catch (Throwable t) {
-            throw new RuntimeException(t);
-        }
+        return MemoryUtil.memByteBuffer(address, capacity);
     }
 
     public static MemoryUtilities.MemoryAllocator getLwjgl3ifyAllocator() {
-        return null;
+        return MemoryManage.getInstance();
     }
 
 }

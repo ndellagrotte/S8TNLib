@@ -135,7 +135,7 @@ public interface IVertexBuffer {
     default void draw(FloatBuffer matrix) {
         GL11.glPushMatrix();
         GL11.glLoadIdentity();
-        GL11.glMultMatrix(matrix);
+        GL11.glMultMatrixf(matrix);
         draw();
         GL11.glPopMatrix();
     }

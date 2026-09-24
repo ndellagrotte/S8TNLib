@@ -4,7 +4,6 @@ import java.nio.IntBuffer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.opengl.APPLEVertexArrayObject;
 import org.lwjgl.opengl.ContextCapabilities;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
@@ -29,16 +28,8 @@ public final class UniversalVAO {
     public static VaoFunctions getImplementation(ContextCapabilities caps) {
         if (caps.OpenGL30) {
             return new VaoGL3();
-        } else if (caps.GL_APPLE_vertex_array_object) {
-            return new VaoApple();
         } else if (caps.GL_ARB_vertex_array_object) {
             return new VaoGL3();
-        }
-
-        // LWJGL3 fallback: GL_APPLE_vertex_array_object capability is bugged on LWJGL3,
-        VaoFunctions appleLwjgl3Fallback = VaoAppleLwjgl3Fallback.tryCreate();
-        if (appleLwjgl3Fallback != null) {
-            return appleLwjgl3Fallback;
         }
 
         LOGGER.warn("No VAO implementation available");
@@ -177,44 +168,6 @@ public final class UniversalVAO {
         @Override
         public void glBindVertexArray(int id) {
             GL30.glBindVertexArray(id);
-        }
-    }
-
-    private static final class VaoApple implements VaoFunctions {
-
-        @Override
-        public int getCurrentBinding() {
-            return GL11.glGetInteger(APPLEVertexArrayObject.GL_VERTEX_ARRAY_BINDING_APPLE);
-        }
-
-        @Override
-        public int glGenVertexArrays() {
-            return APPLEVertexArrayObject.glGenVertexArraysAPPLE();
-        }
-
-        @Override
-        public void glGenVertexArrays(IntBuffer output) {
-            APPLEVertexArrayObject.glGenVertexArraysAPPLE(output);
-        }
-
-        @Override
-        public void glDeleteVertexArrays(int id) {
-            APPLEVertexArrayObject.glDeleteVertexArraysAPPLE(id);
-        }
-
-        @Override
-        public void glDeleteVertexArrays(IntBuffer ids) {
-            APPLEVertexArrayObject.glDeleteVertexArraysAPPLE(ids);
-        }
-
-        @Override
-        public boolean glIsVertexArray(int id) {
-            return APPLEVertexArrayObject.glIsVertexArrayAPPLE(id);
-        }
-
-        @Override
-        public void glBindVertexArray(int id) {
-            APPLEVertexArrayObject.glBindVertexArrayAPPLE(id);
         }
     }
 }

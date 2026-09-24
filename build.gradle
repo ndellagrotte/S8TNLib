@@ -1,0 +1,306 @@
+/*
+ * S8TNLib: GTNHLib ported to Minecraft 1.12.2 on Cleanroom, for Demonica (docs/PROVENANCE.md).
+ *
+ * The jar is an MCP-named library: com.gtnewhorizon.gtnhlib classes only, with no mod metadata, mixins or access
+ * transformer, and no SRG remap. Demonica merges it into its mod jar and remaps that. The host supplies every
+ * library at runtime, so they are all compileOnly here.
+ *
+ * publishToMavenLocal publishes the jar and its sources jar as com.s8tnlib:s8tnlib, once verifyPublishedJars has
+ * checked them. Both are at the end of this file.
+ */
+plugins {
+    id 'java'
+    id 'java-library'
+    id 'maven-publish'
+    id 'xyz.wagyourtail.unimined' version '1.4.36-kappa'
+}
+
+group = property('s8tnlib_group')
+version = property('s8tnlib_version')
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+    // Published next to the jar. There is no javadoc jar.
+    withSourcesJar()
+}
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://maven.cleanroommc.com' }
+}
+
+unimined.minecraft {
+    version '1.12.2'
+
+    mappings {
+        mcp 'stable', '39-1.12'
+    }
+
+    cleanroom {
+        loader '0.6.12-alpha'
+    }
+
+    runs {
+        off = true
+    }
+
+    // A library jar, MCP-named: the host remaps the mod jar it is merged into.
+    defaultRemapJar = false
+}
+
+// The LWJGL natives the tests load, from Actinium's GTNHLib build.
+def osName = System.getProperty('os.name').toLowerCase(Locale.ROOT)
+def osArchitecture = System.getProperty('os.arch').toLowerCase(Locale.ROOT)
+def osKey
+if (osName.startsWith('windows')) {
+    osKey = 'windows'
+} else if (osName.startsWith('linux')) {
+    osKey = 'linux'
+} else if (osName.startsWith('mac')) {
+    osKey = 'macos'
+} else {
+    throw new GradleException("Unsupported test platform: ${osName}/${osArchitecture}")
+}
+
+def nativeClassifiers = [
+    windows: [
+        amd64: 'natives-windows',
+        x86_64: 'natives-windows',
+        x64: 'natives-windows',
+        x86: 'natives-windows-x86',
+        i386: 'natives-windows-x86',
+        i486: 'natives-windows-x86',
+        i586: 'natives-windows-x86',
+        i686: 'natives-windows-x86',
+        aarch64: 'natives-windows-arm64',
+        arm64: 'natives-windows-arm64'
+    ],
+    linux: [
+        amd64: 'natives-linux',
+        x86_64: 'natives-linux',
+        x64: 'natives-linux',
+        arm: 'natives-linux-arm32',
+        arm32: 'natives-linux-arm32',
+        aarch32: 'natives-linux-arm32',
+        armv7l: 'natives-linux-arm32',
+        aarch64: 'natives-linux-arm64',
+        arm64: 'natives-linux-arm64',
+        ppc64le: 'natives-linux-ppc64le',
+        riscv64: 'natives-linux-riscv64'
+    ],
+    macos: [
+        amd64: 'natives-macos',
+        x86_64: 'natives-macos',
+        x64: 'natives-macos',
+        aarch64: 'natives-macos-arm64',
+        arm64: 'natives-macos-arm64'
+    ]
+]
+def lwjglNatives = nativeClassifiers[osKey][osArchitecture]
+if (lwjglNatives == null) {
+    throw new GradleException("Unsupported test platform: ${osName}/${osArchitecture}")
+}
+
+dependencies {
+    def lwjglVersion = '3.4.1'
+    def lombokVersion = '1.18.46'
+    def jomlVersion = '1.10.9'
+    def fastutilVersion = '8.5.18'
+
+    compileOnly 'org.jetbrains:annotations:24.1.0'
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    // Cleanroom ships JOML 1.10.9 at runtime.
+    compileOnly "org.joml:joml:${jomlVersion}"
+    compileOnly "it.unimi.dsi:fastutil:${fastutilVersion}"
+
+    compileOnly "org.lwjgl:lwjgl:${lwjglVersion}"
+    compileOnly "org.lwjgl:lwjgl-opengl:${lwjglVersion}"
+    // Must stay after lwjgl and lwjgl-opengl: lwjglx ships LWJGL2-style classes (see requireLwjgl3BeforeLwjglx).
+    compileOnly 'com.cleanroommc:lwjglx:1.0.0'
+
+    // Unimined puts Minecraft and Cleanroom's libraries on main's classpaths only, so the tests declare theirs.
+    testImplementation 'org.junit.jupiter:junit-jupiter:6.0.3'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation "org.lwjgl:lwjgl:${lwjglVersion}"
+    testRuntimeOnly "org.lwjgl:lwjgl:${lwjglVersion}:${lwjglNatives}"
+    // DefaultVertexFormat links GL20 when it initializes.
+    testRuntimeOnly "org.lwjgl:lwjgl-opengl:${lwjglVersion}"
+    testImplementation "org.joml:joml:${jomlVersion}"
+    testImplementation "it.unimi.dsi:fastutil:${fastutilVersion}"
+}
+
+tasks.withType(JavaCompile).configureEach {
+    sourceCompatibility = '21'
+    targetCompatibility = '21'
+    options.encoding = 'UTF-8'
+    options.release.set(21)
+    javaCompiler = javaToolchains.compilerFor {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+tasks.named('compileJava', JavaCompile).configure {
+    options.fork = true
+    options.forkOptions.jvmArgs.add('--sun-misc-unsafe-memory-access=allow')
+}
+
+/**
+ * lwjglx ships LWJGL2-style org.lwjgl classes: GL11..GL45, and a PointerBuffer and BufferUtils that lwjgl core has
+ * too. javac takes the first match on the classpath, so if lwjglx precedes lwjgl-opengl 3 the build fails with
+ * hundreds of unrelated "cannot find symbol glGetIntegerv" errors, and if it precedes lwjgl core, bytebuf fails on
+ * PointerBuffer. This names the real cause instead. Gradle places a module after its consumers, so lwjgl-opengl
+ * lands where lwjgl is declared: lwjglx must follow both.
+ */
+def requireLwjgl3BeforeLwjglx = { Task task ->
+    def jars = task.classpath.files*.name
+    def lwjglx = jars.findIndexOf { it ==~ /lwjglx-[0-9].*\.jar/ }
+    [/lwjgl-3\.[0-9.]+\.jar/, /lwjgl-opengl-3\.[0-9.]+\.jar/].each { pattern ->
+        def lwjgl3 = jars.findIndexOf { it ==~ pattern }
+        if (lwjglx >= 0 && lwjgl3 >= 0 && lwjglx < lwjgl3) {
+            throw new GradleException("${task.path}: ${jars[lwjglx]} precedes ${jars[lwjgl3]} on the compile " +
+                "classpath, so javac would resolve LWJGL2-style classes. Keep compileOnly lwjglx declared " +
+                "after lwjgl and lwjgl-opengl in build.gradle.")
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    doFirst('requireLwjgl3BeforeLwjglx') { requireLwjgl3BeforeLwjglx(it) }
+}
+
+tasks.named('test', Test).configure {
+    useJUnitPlatform()
+    jvmArgs '--enable-native-access=ALL-UNNAMED', '--sun-misc-unsafe-memory-access=allow'
+}
+
+/*
+ * Publishing: publishToMavenLocal publishes com.s8tnlib:s8tnlib, the jar and its sources jar, with a POM and Gradle
+ * module metadata. mavenLocal is the only target, so no repository is declared. Every library is compileOnly, so
+ * neither file declares a dependency.
+ *
+ * Unimined would strip a mod's published dependencies and drop its module metadata (cleanModPom). S8TNLib declares no
+ * dependencies, so it keeps both files, and verifyPublishedJars checks them.
+ */
+unimined.cleanModPom = false
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+// The commit the jars are built from, with -dirty while tracked files differ from it. Demonica pins it.
+def gitOutput = { List<String> command ->
+    providers.exec { commandLine(command) }.standardOutput.asText.map { it.trim() }
+}
+def s8tnlibCommit = gitOutput(['git', 'rev-parse', 'HEAD'])
+    .zip(gitOutput(['git', '--no-optional-locks', 'status', '--porcelain', '--untracked-files=no'])) { commit, status ->
+        status.isEmpty() ? commit : "${commit}-dirty".toString()
+    }
+
+// Where the kept files came from: the upstream base, and the Demonica commit they equal (docs/PROVENANCE.md).
+def s8tnlibManifest = [
+    'S8TNLib-Base': "gtnhlib@${property('s8tnlib_base')}".toString(),
+    'S8TNLib-Synced-From': "demonica@${property('s8tnlib_synced_from')}".toString()
+]
+
+[tasks.named('jar', Jar), tasks.named('sourcesJar', Jar)].each { jarTask ->
+    jarTask.configure {
+        // Declared, so that a new commit rebuilds the jars even when their contents are unchanged.
+        inputs.property('s8tnlibCommit', s8tnlibCommit)
+        manifest.attributes(s8tnlibManifest)
+        manifest.attributes('S8TNLib-Commit': s8tnlibCommit)
+    }
+}
+
+/**
+ * Demonica merges the jar into its mod jar. So the jar holds com/gtnewhorizon/gtnhlib classes and its manifest, and
+ * nothing else: no mod metadata, mixin configs, nested jars, FML attributes or notices at its root. The sources jar
+ * holds their sources, and neither the POM nor the module metadata declares a dependency.
+ */
+def verifyPublishedJars = tasks.register('verifyPublishedJars') {
+    group = 'verification'
+    description = 'Checks the jars, POM and Gradle module metadata that publishToMavenLocal publishes.'
+
+    def jarFile = tasks.named('jar', Jar).flatMap { it.archiveFile }
+    def sourcesJarFile = tasks.named('sourcesJar', Jar).flatMap { it.archiveFile }
+    def pomTask = tasks.named('generatePomFileForMavenPublication', GenerateMavenPom)
+    def moduleFile = tasks.named('generateMetadataFileForMavenPublication', GenerateModuleMetadata)
+        .flatMap { it.outputFile }
+    inputs.file(jarFile)
+    inputs.file(sourcesJarFile)
+    inputs.files(pomTask)
+    inputs.file(moduleFile)
+    def expectedManifest = ['Manifest-Version': '1.0'] + s8tnlibManifest
+
+    doLast {
+        def problems = []
+        def packageDir = 'com/gtnewhorizon/gtnhlib/'
+        def expected = expectedManifest + ['S8TNLib-Commit': s8tnlibCommit.get()]
+        // Checks one jar, and returns its files under packageDir that end with suffix, without the suffix.
+        def readJar = { File file, String suffix ->
+            def found = [] as Set
+            new java.util.jar.JarFile(file).withCloseable { jar ->
+                jar.entries().each { entry ->
+                    def name = entry.name
+                    if (entry.directory) {
+                        if (name != 'META-INF/' && !packageDir.startsWith(name) && !name.startsWith(packageDir)) {
+                            problems << "${file.name}: unexpected directory ${name}"
+                        }
+                    } else if (name.startsWith(packageDir) && name.endsWith(suffix)) {
+                        found << name.substring(0, name.length() - suffix.length())
+                    } else if (name != 'META-INF/MANIFEST.MF') {
+                        problems << "${file.name}: unexpected entry ${name}"
+                    }
+                }
+                def manifest = jar.manifest?.mainAttributes?.collectEntries { key, value -> [(key.toString()): value] }
+                if (manifest != expected) {
+                    problems << "${file.name}: manifest attributes are ${manifest}, expected ${expected}"
+                }
+            }
+            found
+        }
+        def classes = readJar(jarFile.get().asFile, '.class')
+        def sources = readJar(sourcesJarFile.get().asFile, '.java')
+        // Every class, inner ones included, comes from a source file, and every source file but package-info
+        // compiles to its own class.
+        def outerClasses = classes.collect { it.replaceFirst(/\$.*/, '') } as Set
+        def compiledSources = sources.findAll { !it.endsWith('/package-info') } as Set
+        if (classes.isEmpty() || outerClasses != compiledSources) {
+            problems << "the jar's classes don't match the sources jar: classes without a source " +
+                "${outerClasses - compiledSources}, sources without a class ${compiledSources - outerClasses}"
+        }
+
+        def pomFile = pomTask.get().destination
+        def pom = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(pomFile)
+        def pomDependencies = pom.getElementsByTagName('dependency').length
+        if (pomDependencies != 0) {
+            problems << "${pomFile.name} has ${pomDependencies} <dependency> elements"
+        }
+        def module = new groovy.json.JsonSlurper().parse(moduleFile.get().asFile)
+        module.variants.each { variant ->
+            if (variant.dependencies || variant.dependencyConstraints) {
+                problems << "the module metadata's ${variant.name} variant declares dependencies"
+            }
+        }
+
+        if (!problems.isEmpty()) {
+            throw new GradleException("The published artifacts failed verification:\n - ${problems.join('\n - ')}")
+        }
+    }
+}
+
+tasks.named('check').configure {
+    dependsOn verifyPublishedJars
+}
+
+tasks.withType(PublishToMavenLocal).configureEach {
+    dependsOn verifyPublishedJars
+}

@@ -3,10 +3,10 @@ package com.gtnewhorizon.gtnhlib.client.renderer.vertex.writers;
 import static com.gtnewhorizon.gtnhlib.bytebuf.MemoryUtilities.*;
 import static com.gtnewhorizon.gtnhlib.client.renderer.cel.util.ModelQuadUtil.*;
 
-import net.minecraft.client.renderer.Tessellator;
-
 import org.joml.Matrix4fc;
 import org.joml.Vector3f;
+
+import com.gtnewhorizon.gtnhlib.client.renderer.DirectTessellator;
 
 public final class PositionVertexAttributeWriter implements IVertexAttributeWriter {
 
@@ -32,12 +32,12 @@ public final class PositionVertexAttributeWriter implements IVertexAttributeWrit
     }
 
     @Override
-    public int writeAttribute(long pointer, Tessellator tessellator) {
+    public int writeAttribute(long pointer, DirectTessellator tessellator) {
         throw new UnsupportedOperationException("Cannot write position to tessellator!");
     }
 
     @Override
-    public int readAttribute(long pointer, Tessellator tessellator) {
+    public int readAttribute(long pointer, DirectTessellator tessellator) {
         throw new UnsupportedOperationException("Cannot read position from tessellator!");
     }
 

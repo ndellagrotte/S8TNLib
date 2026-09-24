@@ -3,10 +3,10 @@ package com.gtnewhorizon.gtnhlib.client.renderer.vertex.writers;
 import static com.gtnewhorizon.gtnhlib.bytebuf.MemoryUtilities.*;
 import static com.gtnewhorizon.gtnhlib.client.renderer.cel.util.ModelQuadUtil.*;
 
-import net.minecraft.client.renderer.Tessellator;
-
 import org.joml.Matrix4fc;
 import org.joml.Vector3f;
+
+import com.gtnewhorizon.gtnhlib.client.renderer.DirectTessellator;
 
 public final class NormalVertexAttributeWriter implements IVertexAttributeWriter {
 
@@ -29,14 +29,14 @@ public final class NormalVertexAttributeWriter implements IVertexAttributeWriter
     }
 
     @Override
-    public int writeAttribute(long pointer, Tessellator tessellator) {
-        memPutInt(pointer, tessellator.normal);
+    public int writeAttribute(long pointer, DirectTessellator tessellator) {
+        memPutInt(pointer, tessellator.getPackedNormal());
         return 4;
     }
 
     @Override
-    public int readAttribute(long pointer, Tessellator tessellator) {
-        tessellator.normal = memGetInt(pointer);
+    public int readAttribute(long pointer, DirectTessellator tessellator) {
+        tessellator.setPackedNormalRaw(memGetInt(pointer));
         return 4;
     }
 }

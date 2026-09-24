@@ -1,7 +1,5 @@
 package com.gtnewhorizon.gtnhlib.client.renderer.vertex;
 
-import net.minecraft.client.renderer.Tessellator;
-
 public final class VertexFlags {
 
     public static final int POSITION_BIT = 0x0; // Always enabled by default
@@ -21,14 +19,6 @@ public final class VertexFlags {
     public static VertexFormat getFormat(boolean hasTexture, boolean hasColor, boolean hasNormal,
             boolean hasBrightness) {
         return DefaultVertexFormat.ALL_FORMATS[convertToFlags(hasTexture, hasColor, hasNormal, hasBrightness)];
-    }
-
-    public static VertexFormat getFormat(Tessellator tessellator) {
-        return DefaultVertexFormat.ALL_FORMATS[convertToFlags(
-                tessellator.hasTexture,
-                tessellator.hasColor,
-                tessellator.hasNormals,
-                tessellator.hasBrightness)];
     }
 
     public static VertexFormat getFormat(int flags) {
