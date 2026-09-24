@@ -25,7 +25,7 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
 
-      # Compiles the library, runs its tests and builds the jar.
+      # Compiles the library, runs its tests, and builds and verifies the jars.
       - name: Build
         run: ./gradlew build
 

@@ -4,10 +4,14 @@
  * The jar is an MCP-named library: com.gtnewhorizon.gtnhlib classes only, with no mod metadata, mixins or access
  * transformer, and no SRG remap. Demonica merges it into its mod jar and remaps that. The host supplies every
  * library at runtime, so they are all compileOnly here.
+ *
+ * publishToMavenLocal publishes the jar and its sources jar as com.s8tnlib:s8tnlib, once verifyPublishedJars has
+ * checked them. Both are at the end of this file.
  */
 plugins {
     id 'java'
     id 'java-library'
+    id 'maven-publish'
     id 'xyz.wagyourtail.unimined' version '1.4.36-kappa'
 }
 
@@ -20,6 +24,8 @@ java {
     }
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
+    // Published next to the jar. There is no javadoc jar.
+    withSourcesJar()
 }
 
 repositories {
@@ -170,4 +176,131 @@ tasks.withType(JavaCompile).configureEach {
 tasks.named('test', Test).configure {
     useJUnitPlatform()
     jvmArgs '--enable-native-access=ALL-UNNAMED', '--sun-misc-unsafe-memory-access=allow'
+}
+
+/*
+ * Publishing: publishToMavenLocal publishes com.s8tnlib:s8tnlib, the jar and its sources jar, with a POM and Gradle
+ * module metadata. mavenLocal is the only target, so no repository is declared. Every library is compileOnly, so
+ * neither file declares a dependency.
+ *
+ * Unimined would strip a mod's published dependencies and drop its module metadata (cleanModPom). S8TNLib declares no
+ * dependencies, so it keeps both files, and verifyPublishedJars checks them.
+ */
+unimined.cleanModPom = false
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+// The commit the jars are built from, with -dirty while tracked files differ from it. Demonica pins it.
+def gitOutput = { List<String> command ->
+    providers.exec { commandLine(command) }.standardOutput.asText.map { it.trim() }
+}
+def s8tnlibCommit = gitOutput(['git', 'rev-parse', 'HEAD'])
+    .zip(gitOutput(['git', '--no-optional-locks', 'status', '--porcelain', '--untracked-files=no'])) { commit, status ->
+        status.isEmpty() ? commit : "${commit}-dirty".toString()
+    }
+
+// Where the kept files came from: the upstream base, and the Demonica commit they equal (docs/PROVENANCE.md).
+def s8tnlibManifest = [
+    'S8TNLib-Base': "gtnhlib@${property('s8tnlib_base')}".toString(),
+    'S8TNLib-Synced-From': "demonica@${property('s8tnlib_synced_from')}".toString()
+]
+
+[tasks.named('jar', Jar), tasks.named('sourcesJar', Jar)].each { jarTask ->
+    jarTask.configure {
+        // Declared, so that a new commit rebuilds the jars even when their contents are unchanged.
+        inputs.property('s8tnlibCommit', s8tnlibCommit)
+        manifest.attributes(s8tnlibManifest)
+        manifest.attributes('S8TNLib-Commit': s8tnlibCommit)
+    }
+}
+
+/**
+ * Demonica merges the jar into its mod jar. So the jar holds com/gtnewhorizon/gtnhlib classes and its manifest, and
+ * nothing else: no mod metadata, mixin configs, nested jars, FML attributes or notices at its root. The sources jar
+ * holds their sources, and neither the POM nor the module metadata declares a dependency.
+ */
+def verifyPublishedJars = tasks.register('verifyPublishedJars') {
+    group = 'verification'
+    description = 'Checks the jars, POM and Gradle module metadata that publishToMavenLocal publishes.'
+
+    def jarFile = tasks.named('jar', Jar).flatMap { it.archiveFile }
+    def sourcesJarFile = tasks.named('sourcesJar', Jar).flatMap { it.archiveFile }
+    def pomTask = tasks.named('generatePomFileForMavenPublication', GenerateMavenPom)
+    def moduleFile = tasks.named('generateMetadataFileForMavenPublication', GenerateModuleMetadata)
+        .flatMap { it.outputFile }
+    inputs.file(jarFile)
+    inputs.file(sourcesJarFile)
+    inputs.files(pomTask)
+    inputs.file(moduleFile)
+    def expectedManifest = ['Manifest-Version': '1.0'] + s8tnlibManifest
+
+    doLast {
+        def problems = []
+        def packageDir = 'com/gtnewhorizon/gtnhlib/'
+        def expected = expectedManifest + ['S8TNLib-Commit': s8tnlibCommit.get()]
+        // Checks one jar, and returns its files under packageDir that end with suffix, without the suffix.
+        def readJar = { File file, String suffix ->
+            def found = [] as Set
+            new java.util.jar.JarFile(file).withCloseable { jar ->
+                jar.entries().each { entry ->
+                    def name = entry.name
+                    if (entry.directory) {
+                        if (name != 'META-INF/' && !packageDir.startsWith(name) && !name.startsWith(packageDir)) {
+                            problems << "${file.name}: unexpected directory ${name}"
+                        }
+                    } else if (name.startsWith(packageDir) && name.endsWith(suffix)) {
+                        found << name.substring(0, name.length() - suffix.length())
+                    } else if (name != 'META-INF/MANIFEST.MF') {
+                        problems << "${file.name}: unexpected entry ${name}"
+                    }
+                }
+                def manifest = jar.manifest?.mainAttributes?.collectEntries { key, value -> [(key.toString()): value] }
+                if (manifest != expected) {
+                    problems << "${file.name}: manifest attributes are ${manifest}, expected ${expected}"
+                }
+            }
+            found
+        }
+        def classes = readJar(jarFile.get().asFile, '.class')
+        def sources = readJar(sourcesJarFile.get().asFile, '.java')
+        // Every class, inner ones included, comes from a source file, and every source file but package-info
+        // compiles to its own class.
+        def outerClasses = classes.collect { it.replaceFirst(/\$.*/, '') } as Set
+        def compiledSources = sources.findAll { !it.endsWith('/package-info') } as Set
+        if (classes.isEmpty() || outerClasses != compiledSources) {
+            problems << "the jar's classes don't match the sources jar: classes without a source " +
+                "${outerClasses - compiledSources}, sources without a class ${compiledSources - outerClasses}"
+        }
+
+        def pomFile = pomTask.get().destination
+        def pom = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(pomFile)
+        def pomDependencies = pom.getElementsByTagName('dependency').length
+        if (pomDependencies != 0) {
+            problems << "${pomFile.name} has ${pomDependencies} <dependency> elements"
+        }
+        def module = new groovy.json.JsonSlurper().parse(moduleFile.get().asFile)
+        module.variants.each { variant ->
+            if (variant.dependencies || variant.dependencyConstraints) {
+                problems << "the module metadata's ${variant.name} variant declares dependencies"
+            }
+        }
+
+        if (!problems.isEmpty()) {
+            throw new GradleException("The published artifacts failed verification:\n - ${problems.join('\n - ')}")
+        }
+    }
+}
+
+tasks.named('check').configure {
+    dependsOn verifyPublishedJars
+}
+
+tasks.withType(PublishToMavenLocal).configureEach {
+    dependsOn verifyPublishedJars
 }
