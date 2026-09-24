@@ -1,17 +1,6 @@
 # The port frontier (docs/PROVENANCE.md): upstream files not yet ported, one path per line.
 # build.gradle leaves each out of its source set. A file leaves this list in the commit where it
 # compiles, and for a test, passes; a commit that deletes a file also removes its line.
-src/main/java/com/gtnewhorizon/gtnhlib/ClientProxy.java
-src/main/java/com/gtnewhorizon/gtnhlib/CommonProxy.java
-src/main/java/com/gtnewhorizon/gtnhlib/GTNHLib.java
-src/main/java/com/gtnewhorizon/gtnhlib/api/BlockModelInfo.java
-src/main/java/com/gtnewhorizon/gtnhlib/api/CapturingTesselator.java
-src/main/java/com/gtnewhorizon/gtnhlib/api/IBlockModelProvider.java
-src/main/java/com/gtnewhorizon/gtnhlib/api/IBlockWithCustomSound.java
-src/main/java/com/gtnewhorizon/gtnhlib/api/ITranslucentItem.java
-src/main/java/com/gtnewhorizon/gtnhlib/api/MusicRecordMetadataProvider.java
-src/main/java/com/gtnewhorizon/gtnhlib/api/thaumcraft/EnhancedInfusionRecipe.java
-src/main/java/com/gtnewhorizon/gtnhlib/api/thaumcraft/FormattedResearchPage.java
 src/main/java/com/gtnewhorizon/gtnhlib/bytebuf/APIUtil.java
 src/main/java/com/gtnewhorizon/gtnhlib/bytebuf/CheckIntrinsics.java
 src/main/java/com/gtnewhorizon/gtnhlib/bytebuf/Checks.java
@@ -89,9 +78,7 @@ src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/vertex/writers/LightVerte
 src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/vertex/writers/NormalVertexAttributeWriter.java
 src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/vertex/writers/PositionVertexAttributeWriter.java
 src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/vertex/writers/TextureVertexAttributeWriter.java
-src/main/java/com/gtnewhorizon/gtnhlib/compat/FalseTweaks.java
 src/main/java/com/gtnewhorizon/gtnhlib/compat/Mods.java
-src/main/java/com/gtnewhorizon/gtnhlib/compat/NotEnoughItemsVersionChecker.java
 src/main/java/com/gtnewhorizon/gtnhlib/concurrent/ThreadsafeCache.java
 src/main/java/com/gtnewhorizon/gtnhlib/concurrent/cas/CasAdapter.java
 src/main/java/com/gtnewhorizon/gtnhlib/concurrent/cas/CasList.java
@@ -139,7 +126,6 @@ src/main/resources/assets/gtnhlib/textures/avaritia/cosmic8.png
 src/main/resources/assets/gtnhlib/textures/avaritia/cosmic8.png.mcmeta
 src/main/resources/assets/gtnhlib/textures/avaritia/cosmic9.png
 src/main/resources/assets/gtnhlib/textures/avaritia/cosmic9.png.mcmeta
-src/main/resources/mcmod.info
 src/test/java/com/gtnewhorizon/gtnhlib/client/renderer/DirectTessellatorTest.java
 src/test/java/com/gtnewhorizon/gtnhlib/client/renderer/PrimitiveExtractorTest.java
 src/test/java/com/gtnewhorizon/gtnhlib/client/renderer/VertexFormatTest.java

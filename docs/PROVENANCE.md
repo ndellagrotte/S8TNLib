@@ -453,3 +453,15 @@ with two columns:
 |---|---|
 | `src/main/java/com/gtnewhorizon/gtnhlib/reflect/Fields.java` | 1.7.10-only: a Java 8-19 helper that writes final fields through sun.misc.Unsafe |
 | `src/test/java/com/gtnewhorizon/gtnhlib/test/reflect/` | 1.7.10-only: tests `reflect/Fields`, a Java 8-19 helper that writes final fields through sun.misc.Unsafe |
+
+### drop(integrations)
+
+| File | Reason |
+|---|---|
+| `src/main/java/com/gtnewhorizon/gtnhlib/GTNHLib.java` | unreachable from Demonica: the @Mod class upstream. Actinium cut it down to constants and a logger |
+| `src/main/java/com/gtnewhorizon/gtnhlib/ClientProxy.java` | unreachable from Demonica: the client proxy upstream. Actinium cut it down to a Minecraft field |
+| `src/main/java/com/gtnewhorizon/gtnhlib/CommonProxy.java` | 1.7.10-only: the common proxy of the @Mod class |
+| `src/main/java/com/gtnewhorizon/gtnhlib/api/` | 1.7.10-only: interfaces of dropped features, including CapturingTesselator, which Actinium never imported |
+| `src/main/java/com/gtnewhorizon/gtnhlib/compat/FalseTweaks.java` | 1.7.10-only: compat with FalseTweaks, a 1.7.10 mod |
+| `src/main/java/com/gtnewhorizon/gtnhlib/compat/NotEnoughItemsVersionChecker.java` | 1.7.10-only: checks that GTNH's NotEnoughItems supports RenderTooltipEvent |
+| `src/main/resources/mcmod.info` | 1.7.10-only: mod metadata. S8TNLib is a library, not a mod |
