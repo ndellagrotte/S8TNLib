@@ -47,8 +47,8 @@ was built from.
 
 ## License
 
-S8TNLib is distributed under GPL-3.0 ([`COPYING`](COPYING)). GTNHLib's code
-is LGPL-3.0 ([`LICENSE.txt`](LICENSE.txt)), which may be conveyed under
-GPL-3.0. GPL-3.0 also covers Actinium's changes, whichever of the two
+S8TNLib is distributed under GPL-3.0 ([`LICENSE`](LICENSE)). GTNHLib's code
+is LGPL-3.0 ([`LICENSE-LGPL-3.0.txt`](LICENSE-LGPL-3.0.txt)), which may be
+conveyed under GPL-3.0. GPL-3.0 also covers Actinium's changes, whichever of the two
 licenses they carry. The LWJGL- and ASM-derived files keep their BSD notices.
 [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) has the details.

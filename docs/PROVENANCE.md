@@ -257,7 +257,8 @@ syncline.
 
 ## License
 
-GTNHLib is LGPL-3.0 (`LICENSE.txt`). Actinium's `THIRD_PARTY_NOTICES.md` lists
+GTNHLib is LGPL-3.0 (upstream's `LICENSE.txt`, which S8TNLib keeps as
+`LICENSE-LGPL-3.0.txt`). Actinium's `THIRD_PARTY_NOTICES.md` lists
 its `GTNHLib/` as LGPL-3.0, and Demonica's notices label the same code
 LGPL-3.0. But Actinium's repository `LICENSE` is GPL-3.0, and Demonica treats
 its mod jar, which combines this code with Actinium's root project, as
@@ -267,12 +268,15 @@ files.
 
 Pushing S8TNLib counts as distributing it, so the question had to be settled
 first. On 2026-09-24 the maintainer decided that S8TNLib is distributed under
-GPL-3.0 ([`COPYING`](../COPYING)), the license of Demonica's combined jar.
+GPL-3.0 ([`LICENSE`](../LICENSE)), the license of Demonica's combined jar.
 That holds whichever license covers Actinium's changes: LGPL-3.0 is GPL-3.0
 plus additional permissions, which section 7 of GPL-3.0 lets a redistributor
-remove. `LICENSE.txt` stays as GTNHLib's license, and file headers still
-govern their files ([`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md)).
-The decision came after `v0.1.0`, whose tree still calls the question open.
+remove. GTNHLib's LGPL-3.0 text stays, as `LICENSE-LGPL-3.0.txt`, and file
+headers still govern their files
+([`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md)). The GPL-3.0 text is
+`LICENSE` because GitHub's license detection reads that name first. The
+decision came after `v0.1.0`, whose tree still calls the question open and
+has GTNHLib's `LICENSE.txt` only.
 
 ## Port frontier
 
