@@ -340,3 +340,24 @@ with two columns:
 | `src/main/resources/assets/gtnhlib/textures/blocks/test.png` | 1.7.10-only: the texture of the test blocks in `test/` |
 | `src/main/resources/assets/minecraft/` | native on 1.12.2: the vanilla client jar ships all four of these block models, and these copies would shadow them |
 | `models.md` | native on 1.12.2: vanilla JSON models. It documents GTNHLib's backport of them |
+
+### drop(models)
+
+| File | Reason |
+|---|---|
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/model/BakeData.java` | native on 1.12.2: JSON block and item models |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/model/BakedModelBuilder.java` | native on 1.12.2: JSON block and item models |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/model/BakedModelQuadContext.java` | native on 1.12.2: JSON block and item models |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/model/ItemContext.java` | native on 1.12.2: JSON block and item models |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/model/JSONVariant.java` | native on 1.12.2: JSON block and item models |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/model/ModelISBRH.java` | native on 1.12.2: JSON block and item models |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/model/Weighted.java` | native on 1.12.2: JSON block and item models |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/model/WorldContext.java` | native on 1.12.2: JSON block and item models |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/model/baked/` | native on 1.12.2: JSON block and item models |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/model/color/` | native on 1.12.2: IBlockColor and BlockColors |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/model/loading/` | native on 1.12.2: JSON block and item models |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/model/state/` | native on 1.12.2: JSON block and item models |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/model/unbaked/` | native on 1.12.2: JSON block and item models |
+| `src/main/java/com/gtnewhorizon/gtnhlib/itemrendering/` | native on 1.12.2: layered JSON item models. It is built on Forge's IItemRenderer, which 1.12.2 doesn't have |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/ItemRenderUtil.java` | native on 1.12.2: layered JSON item models. It is built on Forge's IItemRenderer, which 1.12.2 doesn't have |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/vbo/IModelCustomExt.java` | unreachable from Demonica: the VBO interface that an upstream mixin adds to Forge's WavefrontObject |
