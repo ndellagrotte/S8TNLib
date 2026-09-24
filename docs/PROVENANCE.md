@@ -432,3 +432,17 @@ with two columns:
 | `src/main/java/com/gtnewhorizon/gtnhlib/util/font/FontRendering.java` | 1.7.10-only: font rendering helpers |
 | `src/main/java/com/gtnewhorizon/gtnhlib/util/font/GlyphReplacements.java` | 1.7.10-only: custom glyphs for the font renderer |
 | `src/main/java/com/gtnewhorizon/gtnhlib/color/` | 1.7.10-only: RGB and HSV color types |
+
+### drop(geometry)
+
+| File | Reason |
+|---|---|
+| `src/main/java/com/gtnewhorizon/gtnhlib/blockpos/BlockPos.java` | unreachable from Demonica: a BlockPos backport upstream. Actinium cut it down to a mutable int triple |
+| `src/main/java/com/gtnewhorizon/gtnhlib/blockpos/IBlockPos.java` | native on 1.12.2: BlockPos and BlockPos.MutableBlockPos |
+| `src/main/java/com/gtnewhorizon/gtnhlib/blockpos/IMutableBlockPos.java` | native on 1.12.2: BlockPos and BlockPos.MutableBlockPos |
+| `src/main/java/com/gtnewhorizon/gtnhlib/blockpos/IMutableWorldReferent.java` | native on 1.12.2: BlockPos and BlockPos.MutableBlockPos |
+| `src/main/java/com/gtnewhorizon/gtnhlib/blockpos/IWorldReferent.java` | native on 1.12.2: BlockPos and BlockPos.MutableBlockPos |
+| `src/main/java/com/gtnewhorizon/gtnhlib/geometry/` | 1.7.10-only: transforms and iterators. 7 of its 11 files are built on ForgeDirection |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/CoordinatePacker.java` | native on 1.12.2: BlockPos.toLong and fromLong |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/DirectionUtil.java` | 1.7.10-only: built on ForgeDirection |
+| `src/test/java/com/gtnewhorizon/gtnhlib/test/util/CoordinatePackerTest.java` | native on 1.12.2: BlockPos.toLong and fromLong. It tests `util/CoordinatePacker` |
