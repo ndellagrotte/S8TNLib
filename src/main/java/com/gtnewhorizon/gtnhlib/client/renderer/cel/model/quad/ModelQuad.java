@@ -13,10 +13,8 @@ import static com.gtnewhorizon.gtnhlib.client.renderer.cel.util.ModelQuadUtil.Y_
 import static com.gtnewhorizon.gtnhlib.client.renderer.cel.util.ModelQuadUtil.Z_INDEX;
 import static com.gtnewhorizon.gtnhlib.client.renderer.cel.util.ModelQuadUtil.vertexOffset;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11.GL_QUADS;
 
-import org.jetbrains.annotations.ApiStatus;
-
-import com.gtnewhorizon.gtnhlib.client.renderer.CapturingTessellator.Flags;
 import com.gtnewhorizon.gtnhlib.client.renderer.cel.model.quad.properties.ModelQuadFacing;
 import com.gtnewhorizon.gtnhlib.client.renderer.cel.util.ModelQuadUtil;
 
@@ -240,28 +238,6 @@ public class ModelQuad implements ModelQuadViewMutable {
         return this.shaderBlockId;
     }
 
-    @ApiStatus.Internal
-    public void setState(int[] rawBuffer, int srcOffset, Flags flags, int drawMode, int offsetX, int offsetY,
-            int offsetZ) {
-        System.arraycopy(rawBuffer, srcOffset, data, 0, data.length);
-
-        this.normal = 0;
-
-        if (!flags.hasColor) clearColors();
-        if (!flags.hasNormals) this.clearNormals();
-        if (!flags.hasBrightness) this.clearLightmap();
-        // TODO confirm this is correct
-        setHasAmbientOcclusion(flags.hasBrightness);
-
-        offsetPos(0, offsetX);
-        offsetPos(1, offsetY);
-        offsetPos(2, offsetZ);
-
-        if (drawMode == GL_TRIANGLES) quadrangulate();
-
-        setLightFace(ModelQuadUtil.findLightFace(getComputedFaceNormal()));
-    }
-
     /// Copies the third vertex to the fourth, turning this into a degenerate quad. Useful for faking triangle support.
     private void quadrangulate() {
         System.arraycopy(data, vertexOffset(2), data, vertexOffset(3), VERTEX_SIZE);
@@ -351,4 +327,5 @@ public class ModelQuad implements ModelQuadViewMutable {
         }
         return this;
     }
+
 }

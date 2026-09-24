@@ -519,3 +519,20 @@ with two columns:
 | File | Reason |
 |---|---|
 | `src/main17/` | 1.7.10-only: upstream's Java 17 variants for its multi-release jar, marked for lwjgl3ify. Actinium merged their code into the `src/main/java` files of the same name |
+
+### port(renderer): strip the 1.7.10 vanilla-takeover machinery
+
+| File | Reason |
+|---|---|
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/opengl/VaoAppleLwjgl3Fallback.java` | removed by actinium@1a65c496: the APPLE VAO fallback, unused once UniversalVAO lost its APPLE branch |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/LocalTessellator.java` | removed by actinium@1a65c496: a standalone thread-local Tessellator that only the takeover used |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/vao/VertexArrayBuffer.java` | removed by actinium@1a65c496: the deprecated VAO-backed buffer behind VAOManager.createVAO |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/vao/VertexBufferStorage.java` | removed by actinium@303b9789: merged into VertexBuffer as its glBufferStorage mode |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/model/NormalHelper.java` | removed by actinium@b6c98b8b: normal-matrix helpers that, in Actinium, only CapturingTessellator used |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/CapturingTessellator.java` | removed by actinium@b6c98b8b: the quad-capturing Tessellator of the 1.7.10 vanilla takeover |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/DrawCallback.java` | removed by actinium@b6c98b8b: the deprecated per-draw callback of the capturing pipeline |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/PrimitiveExtractor.java` | removed by actinium@b6c98b8b: extracts primitives from vanilla Tessellator buffers for the capturing pipeline |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/QuadExtractor.java` | removed by actinium@b6c98b8b: extracts quads from vanilla Tessellator buffers for the capturing pipeline |
+| `src/test/java/com/gtnewhorizon/gtnhlib/client/renderer/DirectTessellatorTest.java` | 1.7.10-only: drives DirectTessellator through the 1.7.10 Tessellator API, which it no longer extends. Actinium never carried it |
+| `src/test/java/com/gtnewhorizon/gtnhlib/client/renderer/PrimitiveExtractorTest.java` | 1.7.10-only: tests PrimitiveExtractor, which actinium@b6c98b8b removed. Actinium never carried it |
+| `src/test/java/com/gtnewhorizon/gtnhlib/test/client/renderer/TessellatorManagerTest.java` | 1.7.10-only: tests upstream TessellatorManager's capture API, which the direct-capture core replaces. Actinium never carried it |
