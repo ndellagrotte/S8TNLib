@@ -1,15 +1,6 @@
 # The port frontier (docs/PROVENANCE.md): upstream files not yet ported, one path per line.
 # build.gradle leaves each out of its source set. A file leaves this list in the commit where it
 # compiles, and for a test, passes; a commit that deletes a file also removes its line.
-src/main/java/com/gtnewhorizon/gtnhlib/bytebuf/APIUtil.java
-src/main/java/com/gtnewhorizon/gtnhlib/bytebuf/CheckIntrinsics.java
-src/main/java/com/gtnewhorizon/gtnhlib/bytebuf/Checks.java
-src/main/java/com/gtnewhorizon/gtnhlib/bytebuf/MemoryManage.java
-src/main/java/com/gtnewhorizon/gtnhlib/bytebuf/MemoryStack.java
-src/main/java/com/gtnewhorizon/gtnhlib/bytebuf/MemoryUtilities.java
-src/main/java/com/gtnewhorizon/gtnhlib/bytebuf/MultiReleaseMemCopy.java
-src/main/java/com/gtnewhorizon/gtnhlib/bytebuf/MultiReleaseTextDecoding.java
-src/main/java/com/gtnewhorizon/gtnhlib/bytebuf/Pointer.java
 src/main/java/com/gtnewhorizon/gtnhlib/bytebuf/package-info.java
 src/main/java/com/gtnewhorizon/gtnhlib/client/model/NormalHelper.java
 src/main/java/com/gtnewhorizon/gtnhlib/client/opengl/GLCaps.java

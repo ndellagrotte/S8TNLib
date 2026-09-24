@@ -513,3 +513,9 @@ with two columns:
 | `src/test/java/com/gtnewhorizon/gtnhlib/test/datastructs/space/ArrayProximityTest.java` | 1.7.10-only: Minecraft-independent, but nothing kept uses what it tests |
 | `src/test/java/com/gtnewhorizon/gtnhlib/test/util/StdLCGTest.java` | 1.7.10-only: Minecraft-independent, but nothing kept uses what it tests |
 | `src/test/java/com/gtnewhorizon/gtnhlib/test/util/parsing/MathExpressionParserTest.java` | 1.7.10-only: Minecraft-independent, but nothing kept uses what it tests |
+
+### port(bytebuf): fold the Java 17 variants into main
+
+| File | Reason |
+|---|---|
+| `src/main17/` | 1.7.10-only: upstream's Java 17 variants for its multi-release jar, marked for lwjgl3ify. Actinium merged their code into the `src/main/java` files of the same name |

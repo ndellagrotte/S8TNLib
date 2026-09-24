@@ -5,6 +5,7 @@ package com.gtnewhorizon.gtnhlib.bytebuf;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Iterator;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -16,18 +17,39 @@ import org.jetbrains.annotations.Nullable;
  * </p>
  */
 final class StackWalkUtil {
+    private static final StackWalker STACK_WALKER = Runtime.version().feature() >= 17
+            ? StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
+            : null;
 
     private StackWalkUtil() {}
 
     public static int classVersion() {
-        return 8;
+        return Runtime.version().feature() >= 17 ? 17 : 8;
     }
 
     static StackTraceElement[] stackWalkArray(Object[] a) {
+        if (Runtime.version().feature() >= 17) {
+            return Arrays.stream(((StackWalker.StackFrame[]) a)).map(StackWalker.StackFrame::toStackTraceElement)
+                    .toArray(StackTraceElement[]::new);
+        }
         return (StackTraceElement[]) a;
     }
 
     static Object stackWalkGetMethod(Class<?> after) {
+        if (Runtime.version().feature() >= 17) {
+            return STACK_WALKER.walk(stream -> {
+                Iterator<StackWalker.StackFrame> iter = stream.iterator();
+                iter.next();
+                iter.next();
+
+                StackWalker.StackFrame frame;
+                do {
+                    frame = iter.next();
+                } while (frame.getDeclaringClass() == after && iter.hasNext());
+
+                return frame;
+            });
+        }
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
 
         for (int i = 3; i < stackTrace.length; i++) {
@@ -48,6 +70,14 @@ final class StackWalkUtil {
                 && Objects.equals(a.getFileName(), b.getFileName());
     }
 
+    private static boolean isSameMethod(StackWalker.StackFrame a, StackWalker.StackFrame b) {
+        return isSameMethod(a, b, b.getMethodName());
+    }
+
+    private static boolean isSameMethod(StackWalker.StackFrame a, StackWalker.StackFrame b, String methodName) {
+        return a.getDeclaringClass() == b.getDeclaringClass() && a.getMethodName().equals(methodName);
+    }
+
     private static boolean isAutoCloseable(StackTraceElement element, StackTraceElement pushed) {
         // Java 9 try-with-resources: synthetic $closeResource
         if (isSameMethod(element, pushed, "$closeResource")) {
@@ -62,7 +92,43 @@ final class StackWalkUtil {
         return false;
     }
 
+    private static boolean isAutoCloseable(StackWalker.StackFrame element, StackWalker.StackFrame pushed) {
+        if (isSameMethod(element, pushed, "$closeResource")) {
+            return true;
+        }
+
+        return "kotlin.jdk7.AutoCloseableKt".equals(element.getClassName())
+                && "closeFinally".equals(element.getMethodName());
+    }
+
     static @Nullable Object stackWalkCheckPop(Class<?> after, Object pushedObj) {
+        if (Runtime.version().feature() >= 17) {
+            StackWalker.StackFrame pushed = (StackWalker.StackFrame) pushedObj;
+
+            return StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).walk(stream -> {
+                Iterator<StackWalker.StackFrame> iter = stream.iterator();
+                iter.next();
+                iter.next();
+
+                StackWalker.StackFrame element;
+                do {
+                    element = iter.next();
+                } while (element.getDeclaringClass() == after && iter.hasNext());
+
+                if (isSameMethod(element, pushed)) {
+                    return null;
+                }
+
+                if (iter.hasNext() && isAutoCloseable(element, pushed)) {
+                    element = iter.next();
+                    if (isSameMethod(element, pushed)) {
+                        return null;
+                    }
+                }
+
+                return element;
+            });
+        }
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
 
         for (int i = 3; i < stackTrace.length; i++) {
@@ -93,6 +159,11 @@ final class StackWalkUtil {
     }
 
     static Object[] stackWalkGetTrace() {
+        if (Runtime.version().feature() >= 17) {
+            return StackWalker.getInstance().walk(stream -> stream.skip(2)
+                    .dropWhile(frame -> frame.getClassName().startsWith("org.lwjgl.system.Memory"))
+                    .toArray(StackWalker.StackFrame[]::new));
+        }
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
 
         int i = 3;

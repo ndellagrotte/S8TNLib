@@ -21,11 +21,14 @@ final class MultiReleaseTextDecoding {
     private MultiReleaseTextDecoding() {}
 
     public static int classVersion() {
-        return 8;
+        return Runtime.version().feature() >= 17 ? 17 : 8;
     }
 
     /** @see MemoryUtilities#memUTF8(ByteBuffer, int, int) */
     static String decodeUTF8(long source, int length) {
+        if (Runtime.version().feature() >= 17) {
+            return org.lwjgl.system.MemoryUtil.memUTF8(source, length);
+        }
         if (length <= 0) {
             return "";
         }
@@ -66,11 +69,4 @@ final class MultiReleaseTextDecoding {
 
         return new String(string, 0, Math.min(i, length));
     }
-
-    private static String jdkFallback(long source, int length) {
-        byte[] bytes = length <= ARRAY_TLC_SIZE ? ARRAY_TLC_BYTE.get() : new byte[length];
-        memByteBuffer(source, length).get(bytes, 0, length);
-        return new String(bytes, 0, length, StandardCharsets.UTF_8);
-    }
-
 }

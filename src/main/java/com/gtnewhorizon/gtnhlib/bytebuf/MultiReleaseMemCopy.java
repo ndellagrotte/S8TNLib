@@ -12,10 +12,14 @@ final class MultiReleaseMemCopy {
     private MultiReleaseMemCopy() {}
 
     public static int classVersion() {
-        return 8;
+        return Runtime.version().feature() >= 17 ? 17 : 8;
     }
 
     static void copy(long src, long dst, long bytes) {
+        if (Runtime.version().feature() >= 17) {
+            org.lwjgl.system.MemoryUtil.memCopy(src, dst, bytes);
+            return;
+        }
         // A custom Java loop is fastest at small sizes, approximately up to 160 bytes.
         if (BITS64 && bytes < 160L && ((src | dst) & 7L) == 0L) {
             // both src and dst are aligned to 8 bytes
