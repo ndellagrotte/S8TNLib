@@ -10,6 +10,7 @@ S8TNLib ports [GTNHLib](https://github.com/GTNewHorizons/GTNHLib) to Minecraft
 - **Demonica is the only consumer.**
   [Demonica](https://github.com/ndellagrotte/Demonica) merges the S8TNLib jar
   into its mod jar and remaps the result.
+  [`HOST_CONTRACT.md`](HOST_CONTRACT.md) lists what Demonica supplies.
 - **The code comes from Actinium.** The `GTNHLib/` project of
   [Actinium](https://github.com/DHJComical/Actinium) is the only 1.12.2 port
   of GTNHLib. Actinium imported it in one commit, together with unrelated work
@@ -156,6 +157,19 @@ scripts/provenance_audit.py --scope main --ledger
 scripts/provenance_audit.py --scope main --b-ref $ACT --b-layout actinium
 ```
 
+The syncline's manifests are in
+[`provenance/demonica-61fa479d/`](provenance/demonica-61fa479d/), one for
+each baseline, written with `--scope all --write`. Each compares
+`f122acc3215f99ca18d01954912d28a64b327f49`, "port(demonica): Demonica's
+GTNHLib edits". The commits after it up to the syncline leave `src/`
+unchanged.
+
+| Manifest | Baseline | Result |
+|---|---|---|
+| [`base.md`](provenance/demonica-61fa479d/base.md) | `gtnhlib-base/9644810c00` | `main`: 28 verbatim, 29 adapted, 3 new, 333 dropped. `gtnhlib`: 28, 29, 3, 0. `tests`: 2 new. `upstream-tests`: 1 verbatim |
+| [`actinium.md`](provenance/demonica-61fa479d/actinium.md) | `actinium@4a19c959` | `gtnhlib`: 58 verbatim, 2 adapted (`Mods`, `IFontParameters`). `tests`: 2 verbatim. `main`: as `gtnhlib`, and the 30 unreachable files dropped |
+| [`demonica.md`](provenance/demonica-61fa479d/demonica.md) | `demonica@61fa479d` | `gtnhlib`: 60 verbatim. `main`: 60 verbatim, and the 30 unreachable files dropped |
+
 ## Branches
 
 | Branch | Role |
@@ -254,6 +268,8 @@ files.
 Pushing S8TNLib counts as distributing it. Before it is pushed, or published
 beyond `mavenLocal`, S8TNLib must take Demonica's position or state the
 conflict in its notices.
+[`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md) states it, and
+pushing still waits for the maintainer's decision.
 
 ## Port frontier
 
