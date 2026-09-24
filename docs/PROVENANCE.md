@@ -215,12 +215,14 @@ git fetch --multiple upstream actinium demonica
 | `s8tnlib-source/61fa479d` | Demonica | the syncline. It keeps `61fa479d`, `1511a6bd` and `3d0db995` reachable if Demonica's history is rewritten, and is pushed only with the maintainer's go-ahead |
 | `actinium-checkpoint/4a19c959` | S8TNLib | the commit whose kept files and tests equal Actinium's |
 | `demonica-syncline/61fa479d` | S8TNLib | the merge to `dev` whose kept files equal Demonica's |
-| `v<version>` | S8TNLib | a release, such as `v0.1.0` |
+| `v<version>` | S8TNLib | a release, such as `v0.1.0` and `v0.1.1` |
 
 Release tags start with `v` because upstream's version tags, `0.1.0` among
 them, are already in this repository. The Maven coordinates are
 `com.s8tnlib:s8tnlib`, at `0.1.0-SNAPSHOT` during the port and `0.1.0` at the
-syncline.
+syncline. `0.1.1` has 0.1.0's classes: it is the first GitHub release, cut
+once the license was recorded. After a release, `dev` moves to the next
+`-SNAPSHOT`.
 
 ## Commits
 
@@ -276,7 +278,8 @@ headers still govern their files
 ([`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md)). The GPL-3.0 text is
 `LICENSE` because GitHub's license detection reads that name first. The
 decision came after `v0.1.0`, whose tree still calls the question open and
-has GTNHLib's `LICENSE.txt` only.
+has GTNHLib's `LICENSE.txt` only. `v0.1.1` re-releases the same classes from
+a tree that carries the decision.
 
 ## Port frontier
 
