@@ -416,3 +416,19 @@ with two columns:
 | `src/main/java/com/gtnewhorizon/gtnhlib/util/data/IMod.java` | 1.7.10-only: an interface for mod enums, used by LazyBlock and LazyItem |
 | `src/main/java/com/gtnewhorizon/gtnhlib/util/map/ItemStackMap.java` | 1.7.10-only: an ItemStack-keyed map, adapted from NotEnoughItems |
 | `src/main/java/com/gtnewhorizon/gtnhlib/util/ItemUtil.java` | 1.7.10-only: item-transfer helpers for `item/` |
+
+### drop(client-misc)
+
+| File | Reason |
+|---|---|
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/ResourcePackUpdater/` | 1.7.10-only: the resource-pack update checker |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/tooltip/` | 1.7.10-only: random localized lore for fields annotated with @LoreHolder |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/AboveHotbarHUD.java` | 1.7.10-only: text rendered above the hotbar |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/AnimatedTooltipHandler.java` | 1.7.10-only: animated item tooltips |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/ClientUtil.java` | 1.7.10-only: reads the server's view distance |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/FilesUtil.java` | 1.7.10-only: opens a URI on the desktop |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/GuiText.java` | 1.7.10-only: GUI strings that resource packs can override |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/ServerThreadUtil.java` | 1.7.10-only: schedules tasks on the server thread |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/font/FontRendering.java` | 1.7.10-only: font rendering helpers |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/font/GlyphReplacements.java` | 1.7.10-only: custom glyphs for the font renderer |
+| `src/main/java/com/gtnewhorizon/gtnhlib/color/` | 1.7.10-only: RGB and HSV color types |
