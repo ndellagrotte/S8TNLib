@@ -255,6 +255,28 @@ Pushing S8TNLib counts as distributing it. Before it is pushed, or published
 beyond `mavenLocal`, S8TNLib must take Demonica's position or state the
 conflict in its notices.
 
+## Port frontier
+
+Until the port is complete, `port-frontier.txt` lists every upstream file
+under `src/main/java`, `src/main/resources` and `src/test/java` that is not
+ported yet, one path per line. `build.gradle` leaves each out of its source
+set, so the build compiles, tests and packages only what is ported, and
+`git log -p port-frontier.txt` shows the progress.
+
+- **Exit rule.** A file leaves the frontier only in a commit where it
+  compiles, and a test only in one where it passes.
+- **Only kept files leave.** A file that will be dropped stays on the frontier
+  until its `drop(...)` commit, even if it compiles. A kept file that compiles
+  may also wait, when a later commit would make it depend on a file still on
+  the frontier.
+- **Deletions.** A commit that deletes a file also removes its line: the build
+  fails on a line that names a missing file. A deleted file may stay
+  referenced only by files still on the frontier.
+- **`src/main17`** is not a source set, so it has no lines. The `bytebuf` port
+  folds its 4 files into `src/main/java` and removes it.
+- **End.** `build: retire the port frontier` removes the list and its
+  mechanism before gate 1.
+
 ## Drop ledger
 
 Every upstream file that S8TNLib drops gets a row here, added by the commit
