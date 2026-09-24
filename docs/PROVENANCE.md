@@ -311,3 +311,19 @@ with two columns:
 | `src/main/resources/mixins.gtnhlib.early.json` | 1.7.10-only: a mixin config for `mixins/` |
 | `src/main/resources/mixins.gtnhlib.json` | 1.7.10-only: a mixin config for `mixins/` |
 | `src/main/resources/mixins.gtnhlib.late.json` | 1.7.10-only: a mixin config for `mixins/` |
+
+### drop(core)
+
+| File | Reason |
+|---|---|
+| `src/main/java/com/gtnewhorizon/gtnhlib/core/GTNHLibCore.java` | unreachable from Demonica: the FML coremod upstream. Actinium cut it down to isObf() |
+| `src/main/java/com/gtnewhorizon/gtnhlib/core/GTNHLibCoreModContainer.java` | 1.7.10-only: the coremod's FML mod container |
+| `src/main/java/com/gtnewhorizon/gtnhlib/core/GTNHLibLateMixinLoader.java` | 1.7.10-only: the GTNHMixins loader of the late mixins |
+| `src/main/java/com/gtnewhorizon/gtnhlib/core/fml/` | 1.7.10-only: FML class transformers, and a tweaker that registers them late |
+| `src/main/java/com/gtnewhorizon/gtnhlib/core/rfb/` | 1.7.10-only: the RetroFuturaBootstrap plugin and its transformers |
+| `src/main/java/com/gtnewhorizon/gtnhlib/core/shared/` | 1.7.10-only: the Tessellator transformers and the class dumper that the FML and RFB paths share |
+| `src/main/java/com/gtnewhorizon/gtnhlib/asm/ASMUtil.java` | 1.7.10-only: an ASM helper of the class dumper in `core/shared/` |
+| `src/main/java/com/gtnewhorizon/gtnhlib/asm/ByteCodeUtil.java` | 1.7.10-only: an ASM helper of the transformers in `core/fml/` |
+| `src/main/java/com/gtnewhorizon/gtnhlib/asm/SafeClassWriter.java` | 1.7.10-only: an ASM helper of the transformers in `core/fml/` |
+| `src/main/resources/META-INF/gtnhlib_at.cfg` | 1.7.10-only: an access transformer in 1.7.10 names |
+| `src/main/resources/META-INF/rfb-plugin/gtnhlib.properties` | 1.7.10-only: registers the RetroFuturaBootstrap plugin in `core/rfb/` |
