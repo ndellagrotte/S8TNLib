@@ -327,3 +327,16 @@ with two columns:
 | `src/main/java/com/gtnewhorizon/gtnhlib/asm/SafeClassWriter.java` | 1.7.10-only: an ASM helper of the transformers in `core/fml/` |
 | `src/main/resources/META-INF/gtnhlib_at.cfg` | 1.7.10-only: an access transformer in 1.7.10 names |
 | `src/main/resources/META-INF/rfb-plugin/gtnhlib.properties` | 1.7.10-only: registers the RetroFuturaBootstrap plugin in `core/rfb/` |
+
+### drop(blockstate)
+
+| File | Reason |
+|---|---|
+| `src/main/java/com/gtnewhorizon/gtnhlib/blockstate/` | native on 1.12.2: IBlockState and IProperty |
+| `src/main/java/com/gtnewhorizon/gtnhlib/blocks/util/BFSLeafDecay.java` | 1.7.10-only: a leaf-decay search that nothing in GTNHLib uses |
+| `src/main/java/com/gtnewhorizon/gtnhlib/test/` | 1.7.10-only: test blocks and a test item, registered only when GTNHLibConfig enables them |
+| `src/main/resources/assets/gtnhlib/blockstates/` | 1.7.10-only: block states of the test blocks in `test/` |
+| `src/main/resources/assets/gtnhlib/models/` | 1.7.10-only: models of the test blocks in `test/` |
+| `src/main/resources/assets/gtnhlib/textures/blocks/test.png` | 1.7.10-only: the texture of the test blocks in `test/` |
+| `src/main/resources/assets/minecraft/` | native on 1.12.2: the vanilla client jar ships all four of these block models, and these copies would shadow them |
+| `models.md` | native on 1.12.2: vanilla JSON models. It documents GTNHLib's backport of them |
