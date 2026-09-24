@@ -492,3 +492,24 @@ with two columns:
 | `src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/cel/model/quad/properties/ModelQuadWinding.java` | unreachable from Demonica: nothing in Actinium's GTNHLib uses it |
 | `src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/cel/model/tri/ModelTriangle.java` | unreachable from Demonica: nothing in Actinium's GTNHLib uses it |
 | `src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/cel/polyfill/Maps.java` | unreachable from Demonica: nothing in Actinium's GTNHLib uses it |
+
+### drop(utilities)
+
+| File | Reason |
+|---|---|
+| `src/main/java/com/gtnewhorizon/gtnhlib/concurrent/` | 1.7.10-only: Minecraft-independent, but nothing kept uses it |
+| `src/main/java/com/gtnewhorizon/gtnhlib/datastructs/` | 1.7.10-only: Minecraft-independent, but nothing kept uses it |
+| `src/main/java/com/gtnewhorizon/gtnhlib/hash/` | 1.7.10-only: Minecraft-independent, but nothing kept uses it |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/Callback.java` | 1.7.10-only: Minecraft-independent, but nothing kept uses it |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/DistanceUtil.java` | 1.7.10-only: Minecraft-independent, but nothing kept uses it |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/JsonUtil.java` | 1.7.10-only: Minecraft-independent, but nothing kept uses it |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/MathUtil.java` | 1.7.10-only: Minecraft-independent, but nothing kept uses it |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/StdLCG.java` | 1.7.10-only: Minecraft-independent, but nothing kept uses it |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/data/Lazy.java` | 1.7.10-only: Minecraft-independent, but nothing kept uses it |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/parsing/MathExpressionParser.java` | 1.7.10-only: Minecraft-independent, but nothing kept uses it |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/ObjectPooler.java` | unreachable from Demonica: an object pool that nothing in Actinium's GTNHLib uses |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/stacks/Vector3dStack.java` | unreachable from Demonica: a stack of JOML Vector3d that nothing in Actinium's GTNHLib uses |
+| `src/test/java/com/gtnewhorizon/gtnhlib/test/concurrent/CasTest.java` | 1.7.10-only: Minecraft-independent, but nothing kept uses what it tests |
+| `src/test/java/com/gtnewhorizon/gtnhlib/test/datastructs/space/ArrayProximityTest.java` | 1.7.10-only: Minecraft-independent, but nothing kept uses what it tests |
+| `src/test/java/com/gtnewhorizon/gtnhlib/test/util/StdLCGTest.java` | 1.7.10-only: Minecraft-independent, but nothing kept uses what it tests |
+| `src/test/java/com/gtnewhorizon/gtnhlib/test/util/parsing/MathExpressionParserTest.java` | 1.7.10-only: Minecraft-independent, but nothing kept uses what it tests |
