@@ -5,6 +5,8 @@ import static com.gtnewhorizon.gtnhlib.client.renderer.vertex.VertexFlags.*;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.joml.Matrix4fc;
@@ -14,7 +16,6 @@ import com.gtnewhorizon.gtnhlib.client.renderer.cel.model.quad.ModelQuadView;
 import com.gtnewhorizon.gtnhlib.client.renderer.cel.model.quad.ModelQuadViewMutable;
 import com.gtnewhorizon.gtnhlib.client.renderer.DirectTessellator;
 
-import it.unimi.dsi.fastutil.objects.ObjectImmutableList;
 import lombok.Getter;
 
 public class VertexFormat {
@@ -53,7 +54,7 @@ public class VertexFormat {
         }
         this.vertexFlags = flags;
 
-        this.elements = new ObjectImmutableList<>(elements);
+        this.elements = Collections.unmodifiableList(Arrays.asList(elements.clone()));
         this.vertexSize = offset;
 
         DefaultVertexFormat.ALL_FORMATS[this.vertexFlags] = this;
