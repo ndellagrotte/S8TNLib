@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches: [dev, main, 'port/**', 'sync/**']
+    tags: ['v*']
   pull_request:
 
 permissions:
@@ -28,6 +29,15 @@ jobs:
       # Compiles the library, runs its tests, and builds and verifies the jars.
       - name: Build
         run: ./gradlew build
+
+      # The jars of every successful build. A release tag's run supplies the jars attached to the GitHub
+      # release, and a local build of the same commit is compared against them entry for entry.
+      - name: Upload the jars
+        uses: actions/upload-artifact@v7
+        with:
+          name: s8tnlib-jars
+          path: build/libs/*.jar
+          if-no-files-found: error
 
       - name: Upload test reports
         if: failure()
