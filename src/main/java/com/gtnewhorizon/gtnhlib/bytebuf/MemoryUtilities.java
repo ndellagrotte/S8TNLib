@@ -372,7 +372,7 @@ public final class MemoryUtilities {
      * @param size the number of pointer values to allocate.
      */
     public static PointerBuffer memAllocPointer(int size) {
-        return new PointerBuffer(memAlloc(Math.toIntExact(getAllocationSize(size, POINTER_SHIFT))));
+        return PointerBuffer.create(memAlloc(Math.toIntExact(getAllocationSize(size, POINTER_SHIFT))));
     }
 
     /** Unsafe version of {@link #memFree}. */
@@ -565,7 +565,7 @@ public final class MemoryUtilities {
      * @param num the number of pointer values to allocate.
      */
     public static PointerBuffer memCallocPointer(int num) {
-        return new PointerBuffer(memCalloc(Math.toIntExact(getAllocationSize(num, POINTER_SHIFT))));
+        return PointerBuffer.create(memCalloc(Math.toIntExact(getAllocationSize(num, POINTER_SHIFT))));
     }
 
     // --- [ memRealloc] ---
@@ -886,13 +886,13 @@ public final class MemoryUtilities {
 
     /** PointerBuffer version of {@link #memAddress(ByteBuffer)}. */
     public static long memAddress(PointerBuffer buffer) {
-        return address(buffer.position(), POINTER_SHIFT, memAddress0(buffer.getBuffer()));
+        return address(buffer.position(), POINTER_SHIFT, memAddress(buffer));
     }
 
     /** PointerBuffer version of {@link #memAddress(ByteBuffer, int)}. */
     public static long memAddress(PointerBuffer buffer, int position) {
         Objects.requireNonNull(buffer);
-        return address(position, POINTER_SHIFT, memAddress0(buffer.getBuffer()));
+        return address(position, POINTER_SHIFT, memAddress(buffer));
     }
 
     /** Polymorphic version of {@link #memAddress(ByteBuffer)}. */
@@ -1266,12 +1266,12 @@ public final class MemoryUtilities {
         if (CHECKS) {
             check(address);
         }
-        return new PointerBuffer(memByteBuffer(address, capacity));
+        return PointerBuffer.create(memByteBuffer(address, capacity));
     }
 
     /** Like {@link #memPointerBuffer}, but returns {@code null} if {@code address} is {@link #NULL}. */
     public static @Nullable PointerBuffer memPointerBufferSafe(long address, int capacity) {
-        return address == NULL ? null : new PointerBuffer(memByteBuffer(address, capacity));
+        return address == NULL ? null : PointerBuffer.create(memByteBuffer(address, capacity));
     }
 
     // --- [ Buffer duplication ] ---
