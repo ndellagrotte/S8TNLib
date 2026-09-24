@@ -3,4 +3,3 @@
 # compiles, and for a test, passes; a commit that deletes a file also removes its line.
 src/main/java/com/gtnewhorizon/gtnhlib/bytebuf/package-info.java
 src/main/java/com/gtnewhorizon/gtnhlib/compat/Mods.java
-src/test/java/com/gtnewhorizon/gtnhlib/client/renderer/VertexFormatTest.java
