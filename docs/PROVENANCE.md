@@ -480,3 +480,15 @@ with two columns:
 | `src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/textures/` | unreachable from Demonica: texture loading, used only by the Universium post-processing shader |
 | `src/main/resources/assets/gtnhlib/shaders/` | 1.7.10-only: GLSL of the dropped post-processing shaders. Actinium never carried it |
 | `src/main/resources/assets/gtnhlib/textures/avaritia/` | 1.7.10-only: textures of the dropped Universium shader. Actinium never carried them |
+
+### drop(cel)
+
+| File | Reason |
+|---|---|
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/cel/api/util/ColorARGB.java` | unreachable from Demonica: nothing in Actinium's GTNHLib uses it |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/cel/api/util/ColorMixer.java` | unreachable from Demonica: nothing in Actinium's GTNHLib uses it |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/cel/model/line/ModelLine.java` | unreachable from Demonica: nothing in Actinium's GTNHLib uses it |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/cel/model/quad/properties/ModelQuadOrientation.java` | unreachable from Demonica: nothing in Actinium's GTNHLib uses it |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/cel/model/quad/properties/ModelQuadWinding.java` | unreachable from Demonica: nothing in Actinium's GTNHLib uses it |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/cel/model/tri/ModelTriangle.java` | unreachable from Demonica: nothing in Actinium's GTNHLib uses it |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/cel/polyfill/Maps.java` | unreachable from Demonica: nothing in Actinium's GTNHLib uses it |
