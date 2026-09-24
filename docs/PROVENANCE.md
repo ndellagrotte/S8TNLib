@@ -302,4 +302,12 @@ with two columns:
 `scripts/provenance_audit.py --ledger` checks the rows against the tree
 ([Scopes and audits](#scopes-and-audits)).
 
-Nothing has been dropped yet.
+### drop(mixins)
+
+| File | Reason |
+|---|---|
+| `src/main/java/com/gtnewhorizon/gtnhlib/mixins/` | 1.7.10-only: mixins into 1.7.10 vanilla, Forge and FML classes |
+| `src/main/java/com/gtnewhorizon/gtnhlib/mixin/` | 1.7.10-only: the GTNHMixins builder DSL, deprecated upstream |
+| `src/main/resources/mixins.gtnhlib.early.json` | 1.7.10-only: a mixin config for `mixins/` |
+| `src/main/resources/mixins.gtnhlib.json` | 1.7.10-only: a mixin config for `mixins/` |
+| `src/main/resources/mixins.gtnhlib.late.json` | 1.7.10-only: a mixin config for `mixins/` |
