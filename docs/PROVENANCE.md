@@ -446,3 +446,10 @@ with two columns:
 | `src/main/java/com/gtnewhorizon/gtnhlib/util/CoordinatePacker.java` | native on 1.12.2: BlockPos.toLong and fromLong |
 | `src/main/java/com/gtnewhorizon/gtnhlib/util/DirectionUtil.java` | 1.7.10-only: built on ForgeDirection |
 | `src/test/java/com/gtnewhorizon/gtnhlib/test/util/CoordinatePackerTest.java` | native on 1.12.2: BlockPos.toLong and fromLong. It tests `util/CoordinatePacker` |
+
+### drop(reflect)
+
+| File | Reason |
+|---|---|
+| `src/main/java/com/gtnewhorizon/gtnhlib/reflect/Fields.java` | 1.7.10-only: a Java 8-19 helper that writes final fields through sun.misc.Unsafe |
+| `src/test/java/com/gtnewhorizon/gtnhlib/test/reflect/` | 1.7.10-only: tests `reflect/Fields`, a Java 8-19 helper that writes final fields through sun.misc.Unsafe |

@@ -103,7 +103,6 @@ src/main/java/com/gtnewhorizon/gtnhlib/datastructs/space/ArrayProximityMap4D.jav
 src/main/java/com/gtnewhorizon/gtnhlib/datastructs/space/VolumeShape.java
 src/main/java/com/gtnewhorizon/gtnhlib/hash/Fnv1a32.java
 src/main/java/com/gtnewhorizon/gtnhlib/hash/Fnv1a64.java
-src/main/java/com/gtnewhorizon/gtnhlib/reflect/Fields.java
 src/main/java/com/gtnewhorizon/gtnhlib/util/Callback.java
 src/main/java/com/gtnewhorizon/gtnhlib/util/DistanceUtil.java
 src/main/java/com/gtnewhorizon/gtnhlib/util/JsonUtil.java
@@ -147,7 +146,5 @@ src/test/java/com/gtnewhorizon/gtnhlib/client/renderer/VertexFormatTest.java
 src/test/java/com/gtnewhorizon/gtnhlib/test/client/renderer/TessellatorManagerTest.java
 src/test/java/com/gtnewhorizon/gtnhlib/test/concurrent/CasTest.java
 src/test/java/com/gtnewhorizon/gtnhlib/test/datastructs/space/ArrayProximityTest.java
-src/test/java/com/gtnewhorizon/gtnhlib/test/reflect/FieldsTestSubject.java
-src/test/java/com/gtnewhorizon/gtnhlib/test/reflect/FieldsTests.java
 src/test/java/com/gtnewhorizon/gtnhlib/test/util/StdLCGTest.java
 src/test/java/com/gtnewhorizon/gtnhlib/test/util/parsing/MathExpressionParserTest.java
