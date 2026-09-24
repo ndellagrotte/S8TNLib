@@ -1,3 +1,0 @@
-# The port frontier (docs/PROVENANCE.md): upstream files not yet ported, one path per line.
-# build.gradle leaves each out of its source set. A file leaves this list in the commit where it
-# compiles, and for a test, passes; a commit that deletes a file also removes its line.

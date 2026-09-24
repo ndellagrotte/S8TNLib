@@ -257,25 +257,25 @@ conflict in its notices.
 
 ## Port frontier
 
-Until the port is complete, `port-frontier.txt` lists every upstream file
-under `src/main/java`, `src/main/resources` and `src/test/java` that is not
-ported yet, one path per line. `build.gradle` leaves each out of its source
-set, so the build compiles, tests and packages only what is ported, and
-`git log -p port-frontier.txt` shows the progress.
+During the port, `port-frontier.txt` listed every upstream file under
+`src/main/java`, `src/main/resources` and `src/test/java` that was not ported
+yet, one path per line. `build.gradle` left each out of its source set, so the
+build compiled, tested and packaged only what was ported.
+`build: retire the port frontier` removed the list and its mechanism before
+gate 1, once `compat/Mods`, the last file on it, was ported.
+`git log -p -- port-frontier.txt` shows the progress.
 
-- **Exit rule.** A file leaves the frontier only in a commit where it
-  compiles, and a test only in one where it passes.
-- **Only kept files leave.** A file that will be dropped stays on the frontier
-  until its `drop(...)` commit, even if it compiles. A kept file that compiles
-  may also wait, when a later commit would make it depend on a file still on
-  the frontier.
-- **Deletions.** A commit that deletes a file also removes its line: the build
-  fails on a line that names a missing file. A deleted file may stay
+- **Exit rule.** A file left the frontier only in a commit where it compiled,
+  and a test only in one where it passed.
+- **Only kept files left.** A file that was to be dropped stayed on the
+  frontier until its `drop(...)` commit, even if it compiled. A kept file that
+  compiled could also wait, when a later commit would make it depend on a file
+  still on the frontier.
+- **Deletions.** A commit that deleted a file also removed its line: the build
+  failed on a line that named a missing file. A deleted file could stay
   referenced only by files still on the frontier.
-- **`src/main17`** is not a source set, so it has no lines. The `bytebuf` port
-  folds its 4 files into `src/main/java` and removes it.
-- **End.** `build: retire the port frontier` removes the list and its
-  mechanism before gate 1.
+- **`src/main17`** was not a source set, so it had no lines. The `bytebuf`
+  port folded its 4 files into `src/main/java` and removed it.
 
 ## Drop ledger
 

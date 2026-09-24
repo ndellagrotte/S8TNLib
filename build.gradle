@@ -4,8 +4,6 @@
  * The jar is an MCP-named library: com.gtnewhorizon.gtnhlib classes only, with no mod metadata, mixins or access
  * transformer, and no SRG remap. Demonica merges it into its mod jar and remaps that. The host supplies every
  * library at runtime, so they are all compileOnly here.
- *
- * port-frontier.txt lists the upstream files not yet ported; the build leaves them out of their source sets.
  */
 plugins {
     id 'java'
@@ -46,43 +44,6 @@ unimined.minecraft {
 
     // A library jar, MCP-named: the host remaps the mod jar it is merged into.
     defaultRemapJar = false
-}
-
-/*
- * The port frontier (docs/PROVENANCE.md): port-frontier.txt lists every upstream path not yet ported, one per line,
- * and each is excluded from its source set. A file leaves the list in the commit where it compiles, and for a test,
- * passes. A line must name a file that exists, so the commit that deletes a file also removes its line.
- */
-def frontierRoots = [
-    'src/main/java/'     : sourceSets.main.java,
-    'src/main/resources/': sourceSets.main.resources,
-    'src/test/java/'     : sourceSets.test.java
-]
-def frontierProblems = []
-def frontierPaths = [] as Set
-file('port-frontier.txt').readLines().eachWithIndex { line, index ->
-    if (line.isBlank() || line.startsWith('#')) {
-        return
-    }
-    def where = "port-frontier.txt:${index + 1}: ${line}"
-    def root = frontierRoots.keySet().find { line.startsWith(it) }
-    if (root == null) {
-        frontierProblems << "${where} is not under ${frontierRoots.keySet().join(', ')}"
-    } else if (!file(line).isFile()) {
-        frontierProblems << "${where} does not exist"
-    } else if (!frontierPaths.add(line)) {
-        frontierProblems << "${where} is listed twice"
-    } else {
-        frontierRoots[root].exclude(line.substring(root.length()))
-    }
-}
-if (!frontierProblems.isEmpty()) {
-    throw new GradleException("port-frontier.txt does not match the tree:\n - ${frontierProblems.join('\n - ')}")
-}
-
-// The excluded resources leave their directories behind: keep those out of the jar.
-tasks.named('processResources').configure {
-    includeEmptyDirs = false
 }
 
 // The LWJGL natives the tests load, from Actinium's GTNHLib build.

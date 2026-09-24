@@ -25,7 +25,7 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
 
-      # Compiles what is ported (port-frontier.txt lists the rest), tests it and builds the jar.
+      # Compiles the library, runs its tests and builds the jar.
       - name: Build
         run: ./gradlew build
 
