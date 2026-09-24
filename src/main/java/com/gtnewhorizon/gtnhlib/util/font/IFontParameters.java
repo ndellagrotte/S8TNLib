@@ -1,29 +1,10 @@
 package com.gtnewhorizon.gtnhlib.util.font;
 
-/**
- * For use with Angelica's custom fonts
- */
 public interface IFontParameters {
-
-    default float getGlyphScaleX() {
-        return 1;
-    }
-
-    default float getGlyphScaleY() {
-        return 1;
-    }
-
-    default float getGlyphSpacing() {
-        return 0;
-    }
-
-    default float getWhitespaceScale() {
-        return 1;
-    }
-
-    default float getShadowOffset() {
-        return 1;
-    }
-
-    float getCharWidthFine(char chr);
+    default float actinium$getGlyphScaleX() { return 1.0f; }
+    default float actinium$getGlyphScaleY() { return 1.0f; }
+    default float actinium$getGlyphSpacing() { return 0.0f; }
+    default float actinium$getWhitespaceScale() { return 1.0f; }
+    default float actinium$getShadowOffset() { return 1.0f; }
+    default float actinium$getCharWidthFine(char chr) { return 0.0f; }
 }
