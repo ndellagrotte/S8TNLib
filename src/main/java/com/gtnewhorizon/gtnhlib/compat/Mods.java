@@ -24,7 +24,7 @@ import com.cleanroommc.discovery.CleanroomModDiscoverer;
  *
  * <p>The constants live here rather than in the compat classes so that every call site - the
  * compat classes themselves, mixin code, per-frame paths and the shader module - reads a cached
- * flag without loading an Actinium compat class, which would pull the guarded mod's classes into
+ * flag without loading a Demonica compat class, which would pull the guarded mod's classes into
  * the class load.</p>
  */
 public final class Mods {
@@ -36,6 +36,7 @@ public final class Mods {
     public static final boolean FLUIDLOGGED_API = isModPresent("fluidlogged_api");
     public static final boolean FLUXLOADING = isModPresent("fluxloading");
     public static final boolean HBM = isModPresent("hbm");
+    public static final boolean LITTLETILES = isModPresent("littletiles");
     public static final boolean NEOFONTRENDER = isModPresent("neofontrender");
     public static final boolean NEVERENOUGHANIMATIONS = isModPresent("neverenoughanimations");
     public static final boolean RFP2 = isModPresent("rfp2");
