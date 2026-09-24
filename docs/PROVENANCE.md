@@ -465,3 +465,18 @@ with two columns:
 | `src/main/java/com/gtnewhorizon/gtnhlib/compat/FalseTweaks.java` | 1.7.10-only: compat with FalseTweaks, a 1.7.10 mod |
 | `src/main/java/com/gtnewhorizon/gtnhlib/compat/NotEnoughItemsVersionChecker.java` | 1.7.10-only: checks that GTNH's NotEnoughItems supports RenderTooltipEvent |
 | `src/main/resources/mcmod.info` | 1.7.10-only: mod metadata. S8TNLib is a library, not a mod |
+
+### drop(render-effects)
+
+| File | Reason |
+|---|---|
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/postprocessing/CustomFramebuffer.java` | unreachable from Demonica: the post-processing pipeline. The kept PostProcessingBridge and DepthTextureProvider don't use it |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/postprocessing/I3DGeometryRenderer.java` | unreachable from Demonica: the post-processing pipeline. The kept PostProcessingBridge and DepthTextureProvider don't use it |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/postprocessing/PostProcessingHelper.java` | unreachable from Demonica: the post-processing pipeline. The kept PostProcessingBridge and DepthTextureProvider don't use it |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/postprocessing/PostProcessingManager.java` | unreachable from Demonica: the post-processing pipeline. The kept PostProcessingBridge and DepthTextureProvider don't use it |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/postprocessing/SharedDepthFramebuffer.java` | unreachable from Demonica: the post-processing pipeline. The kept PostProcessingBridge and DepthTextureProvider don't use it |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/postprocessing/shaders/` | unreachable from Demonica: the post-processing pipeline. The kept PostProcessingBridge and DepthTextureProvider don't use it |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/shader/` | unreachable from Demonica: shader programs, used only by the post-processing shaders |
+| `src/main/java/com/gtnewhorizon/gtnhlib/client/renderer/textures/` | unreachable from Demonica: texture loading, used only by the Universium post-processing shader |
+| `src/main/resources/assets/gtnhlib/shaders/` | 1.7.10-only: GLSL of the dropped post-processing shaders. Actinium never carried it |
+| `src/main/resources/assets/gtnhlib/textures/avaritia/` | 1.7.10-only: textures of the dropped Universium shader. Actinium never carried them |
