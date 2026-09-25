@@ -45,3 +45,41 @@ jobs:
         with:
           name: test-reports
           path: build/reports/tests
+
+  # A v* tag's run creates its GitHub release, as a draft, with the jars the build job made: s8tnlib-<version>.jar
+  # (SRG), its sources jar and SHA256SUMS. The notes start as the annotated tag's message. The tag is pushed by hand,
+  # and publishing the draft stays the maintainer's step.
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v6
+
+      # actions/checkout may leave the tag lightweight; --notes-from-tag needs the annotated tag object.
+      - name: Fetch the tag
+        run: git fetch --force origin "+${GITHUB_REF}:${GITHUB_REF}"
+
+      - name: Download the jars
+        uses: actions/download-artifact@v7
+        with:
+          name: s8tnlib-jars
+          path: release
+
+      - name: Create the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          cd release
+          jar="s8tnlib-${version}.jar"
+          sources="s8tnlib-${version}-sources.jar"
+          ls -l
+          test -f "$jar" && test -f "$sources"
+          sha256sum "$jar" "$sources" > SHA256SUMS
+          cat SHA256SUMS
+          gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --verify-tag --draft \
+            --title "S8TNLib ${version}" --notes-from-tag "$jar" "$sources" SHA256SUMS
