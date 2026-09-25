@@ -81,5 +81,5 @@ jobs:
           test -f "$jar" && test -f "$sources"
           sha256sum "$jar" "$sources" > SHA256SUMS
           cat SHA256SUMS
-          gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --verify-tag --draft \
+          gh release create "$GITHUB_REF_NAME" --verify-tag --draft \
             --title "S8TNLib ${version}" --notes-from-tag "$jar" "$sources" SHA256SUMS
