@@ -20,8 +20,9 @@ S8TNLib ports [GTNHLib](https://github.com/GTNewHorizons/GTNHLib) to Minecraft
   that Demonica's code reached at the syncline, Actinium's 2 GTNHLib tests,
   and upstream's `VertexFormatTest` if it passes unmodified. Everything else
   is dropped, one labeled commit per subsystem, and recorded in the
-  [drop ledger](#drop-ledger). Two of the 60 moved to Demonica in 0.2.0, so
-  58 remain.
+  [drop ledger](#drop-ledger). Two of the 60 moved to Demonica in 0.2.0, and
+  0.3.0 dropped the 11 `bytebuf` files, which LWJGL 3.4.1 provides, so 47
+  remain.
 - **The syncline is exact.** At the syncline, every kept main file is
   byte-identical to Demonica's copy and every kept test to its source. A
   [blob-SHA audit](#scopes-and-audits) proves it, at `v0.1.0` and `v0.1.1`.
@@ -65,10 +66,12 @@ byte identity with Demonica ends. The rules for that work:
 - **Measured against `v0.1.1`.** `scripts/provenance_audit.py --scope main
   --a-ref v0.1.1 --a-layout s8tnlib` lists what changed since the syncline,
   and `git diff --stat v0.1.1..` covers the tests.
-- **Own tests, in classes of S8TNLib's own,** so that Actinium's two tests
-  and upstream's `VertexFormatTest` stay verbatim: the `tests` and
-  `upstream-tests` scopes still hold at `HEAD`. A regression test runs red on
-  the old code before it runs green.
+- **Own tests, in classes of S8TNLib's own,** so that Actinium's tests and
+  upstream's `VertexFormatTest` stay verbatim. The `tests` and
+  `upstream-tests` scopes held at `HEAD` through 0.2.0. Since 0.3.0 dropped
+  `bytebuf`, `tests` covers `TessellatorManagerTest` only, and
+  `VertexFormatTest` differs from upstream's by its `MemoryUtil` import line.
+  A regression test runs red on the old code before it runs green.
 - **Own subjects,** `fix(<area>):` and `refactor(<area>):`
   ([Commits](#commits)). A file that moves to Demonica gets a ledger row,
   `moved to Demonica:`, and its commit a `Moved-To:` trailer.
@@ -101,6 +104,19 @@ adapted, 2 moved to Demonica, none added.
   ([ledger](#dropdemonica-only)).
 - New tests: `bytebuf/PointerBufferTest`, `bytebuf/StackWalkUtilTest` and
   `client/renderer/TessellatorManagerBuffersTest`.
+
+### 0.3.0
+
+Against `v0.2.0`: 37 files verbatim, 10 adapted, 11 dropped, none added.
+
+- `bytebuf` is gone ([ledger](#dropbytebuf)). Its files were LWJGL 3 code,
+  and Cleanroom 0.6.12 ships LWJGL 3.4.1, where each has a counterpart in
+  `org.lwjgl.system`. Since `d54b4407` they allocated through `MemoryUtil`
+  already. The 10 files that used `MemoryUtilities` import `MemoryUtil`;
+  `VertexOptimizer` loses its unused import.
+- The tests of `bytebuf`, `MemoryUtilitiesTest`, `PointerBufferTest` and
+  `StackWalkUtilTest`, go with it: they would test LWJGL now.
+  `VertexFormatTest` imports `MemoryUtil`, so it is no longer upstream's.
 
 ## What is kept
 
@@ -137,8 +153,10 @@ at `4a19c959` reaches the same 60.
 - Two of the kept types served only Demonica, and nothing inside GTNHLib used
   them: `compat/Mods` (used by 10 root and 2 `shader` files) and
   `util/font/IFontParameters` (implemented by `MixinFontRenderer`). In 0.2.0
-  they moved to Demonica ([ledger](#dropdemonica-only)), so the tree keeps 58
+  they moved to Demonica ([ledger](#dropdemonica-only)), so the tree kept 58
   files: 55 that upstream has, and Actinium's 3.
+- In 0.3.0 the 11 `bytebuf` files went ([ledger](#dropbytebuf)), so the tree
+  keeps 47: 44 that upstream has, 23 of them verbatim, and Actinium's 3.
 
 ## Path map
 
@@ -174,15 +192,16 @@ scope's root, so it matches across layouts.
 | Scope | Files | Layouts |
 |---|---|---|
 | `gtnhlib` | the 60 files kept at the syncline, `KEPT` in the script | all four |
-| `tests` | Actinium's `MemoryUtilitiesTest` and `TessellatorManagerTest` | `upstream`, `actinium`, `s8tnlib` |
+| `tests` | Actinium's `TessellatorManagerTest`, and its `MemoryUtilitiesTest` until 0.3.0 | `upstream`, `actinium`, `s8tnlib` |
 | `upstream-tests` | upstream's `VertexFormatTest`, while it is kept | `upstream`, `s8tnlib` |
 | `main` | every main source file, for the classification manifest | all four |
 
 - `gtnhlib`, `tests` and `upstream-tests` restrict both sides to the same
   paths, so `--expect-identical` ignores whatever else a tree carries.
 - The `gtnhlib` scope equals Demonica's only up to `v0.1.1`, so gates 1 and 2
-  name their tags with `--b-ref`. `tests` and `upstream-tests` still hold at
-  `HEAD`.
+  name their tags with `--b-ref`. `tests` still holds at `HEAD`.
+  `upstream-tests` held through `v0.2.0`: 0.3.0 changed `VertexFormatTest`'s
+  import line.
 - Demonica never vendored GTNHLib's tests, so `tests` is audited against
   Actinium only.
 - `--ledger` checks the [drop ledger](#drop-ledger), as committed at
@@ -204,8 +223,8 @@ scripts/provenance_audit.py --scope tests --a-ref $ACT --a-layout actinium --exp
 # Gate 2, at the syncline: the kept files equal Demonica's.
 scripts/provenance_audit.py --scope gtnhlib --a-ref $DEM --a-layout demonica --b-ref v0.1.1 --expect-identical
 
-# VertexFormatTest is still upstream's.
-scripts/provenance_audit.py --scope upstream-tests --expect-identical
+# VertexFormatTest was upstream's through v0.2.0.
+scripts/provenance_audit.py --scope upstream-tests --b-ref v0.2.0 --expect-identical
 
 # What S8TNLib changed since the syncline:
 scripts/provenance_audit.py --scope main --a-ref v0.1.1 --a-layout s8tnlib
@@ -641,3 +660,19 @@ with two columns:
 |---|---|
 | `src/main/java/com/gtnewhorizon/gtnhlib/compat/Mods.java` | moved to Demonica: `com.demonica.compat.Mods`, in its `:shader` project, at demonica@55c51cdf |
 | `src/main/java/com/gtnewhorizon/gtnhlib/util/font/IFontParameters.java` | moved to Demonica: `com.demonica.render.font.IFontParameters`, at demonica@b93f3130 |
+
+### drop(bytebuf)
+
+| File | Reason |
+|---|---|
+| `src/main/java/com/gtnewhorizon/gtnhlib/bytebuf/APIUtil.java` | native on 1.12.2: `org.lwjgl.system.APIUtil` (LWJGL 3.4.1, Cleanroom 0.6.12) |
+| `src/main/java/com/gtnewhorizon/gtnhlib/bytebuf/CheckIntrinsics.java` | native on 1.12.2: `org.lwjgl.system.CheckIntrinsics` (LWJGL 3.4.1, Cleanroom 0.6.12) |
+| `src/main/java/com/gtnewhorizon/gtnhlib/bytebuf/Checks.java` | native on 1.12.2: `org.lwjgl.system.Checks` (LWJGL 3.4.1, Cleanroom 0.6.12) |
+| `src/main/java/com/gtnewhorizon/gtnhlib/bytebuf/MemoryManage.java` | native on 1.12.2: `org.lwjgl.system.MemoryManage` (LWJGL 3.4.1, Cleanroom 0.6.12) |
+| `src/main/java/com/gtnewhorizon/gtnhlib/bytebuf/MemoryStack.java` | native on 1.12.2: `org.lwjgl.system.MemoryStack` (LWJGL 3.4.1, Cleanroom 0.6.12) |
+| `src/main/java/com/gtnewhorizon/gtnhlib/bytebuf/MemoryUtilities.java` | native on 1.12.2: `org.lwjgl.system.MemoryUtil` (LWJGL 3.4.1, Cleanroom 0.6.12) |
+| `src/main/java/com/gtnewhorizon/gtnhlib/bytebuf/MultiReleaseMemCopy.java` | native on 1.12.2: `org.lwjgl.system.MemoryUtil.memCopy` (LWJGL 3.4.1, Cleanroom 0.6.12), which S8TNLib's copy already called |
+| `src/main/java/com/gtnewhorizon/gtnhlib/bytebuf/MultiReleaseTextDecoding.java` | native on 1.12.2: `org.lwjgl.system.MultiReleaseTextDecoding` (LWJGL 3.4.1, Cleanroom 0.6.12) |
+| `src/main/java/com/gtnewhorizon/gtnhlib/bytebuf/Pointer.java` | native on 1.12.2: `org.lwjgl.system.Pointer` (LWJGL 3.4.1, Cleanroom 0.6.12) |
+| `src/main/java/com/gtnewhorizon/gtnhlib/bytebuf/StackWalkUtil.java` | native on 1.12.2: `org.lwjgl.system.StackWalkUtil` (LWJGL 3.4.1, Cleanroom 0.6.12) |
+| `src/main/java/com/gtnewhorizon/gtnhlib/bytebuf/package-info.java` | native on 1.12.2: `org.lwjgl.system` (LWJGL 3.4.1, Cleanroom 0.6.12). The package's javadoc |

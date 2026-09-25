@@ -9,11 +9,12 @@ Minecraft 1.12.2 on Cleanroom, for
   of GTNHLib. S8TNLib replays that work on upstream's history as a series of
   reviewable commits, and its port commits name the Actinium commits they
   take.
-- **It keeps what Demonica uses.** That is 58 source files: the renderer's
+- **It keeps what Demonica uses.** That is 47 source files: the renderer's
   direct-capture tessellator, vertex formats, VAO and VBO helpers and quad
-  model types, and the `bytebuf` memory utilities. Every other upstream file
-  is dropped, with its reason recorded. Two types that only Demonica used
-  moved to Demonica in 0.2.0.
+  model types. Every other upstream file is dropped, with its reason
+  recorded. Two types that only Demonica used moved to Demonica in 0.2.0, and
+  0.3.0 dropped the `bytebuf` memory utilities for LWJGL's own
+  `org.lwjgl.system`.
 - **It equaled Demonica's copy up to 0.1.1.** In `v0.1.0` and `v0.1.1`, every
   kept file is byte-identical to Demonica's `GTNHLib/` at
   `demonica@61fa479d`, and a blob-SHA audit proves it. Demonica has had no
@@ -53,5 +54,5 @@ was built from.
 S8TNLib is distributed under GPL-3.0 ([`LICENSE`](LICENSE)). GTNHLib's code
 is LGPL-3.0 ([`LICENSE-LGPL-3.0.txt`](LICENSE-LGPL-3.0.txt)), which may be
 conveyed under GPL-3.0. GPL-3.0 also covers Actinium's changes, whichever of the two
-licenses they carry. The LWJGL- and ASM-derived files keep their BSD notices.
+licenses they carry. The ASM-derived file keeps its BSD notice.
 [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) has the details.

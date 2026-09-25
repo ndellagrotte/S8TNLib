@@ -152,9 +152,9 @@ tasks.named('compileJava', JavaCompile).configure {
 /**
  * lwjglx ships LWJGL2-style org.lwjgl classes: GL11..GL45, and a PointerBuffer and BufferUtils that lwjgl core has
  * too. javac takes the first match on the classpath, so if lwjglx precedes lwjgl-opengl 3 the build fails with
- * hundreds of unrelated "cannot find symbol glGetIntegerv" errors, and if it precedes lwjgl core, bytebuf fails on
- * PointerBuffer. This names the real cause instead. Gradle places a module after its consumers, so lwjgl-opengl
- * lands where lwjgl is declared: lwjglx must follow both.
+ * hundreds of unrelated "cannot find symbol glGetIntegerv" errors, and if it precedes lwjgl core, code that uses
+ * PointerBuffer or BufferUtils compiles against lwjglx's. This names the real cause instead. Gradle places a module
+ * after its consumers, so lwjgl-opengl lands where lwjgl is declared: lwjglx must follow both.
  */
 def requireLwjgl3BeforeLwjglx = { Task task ->
     def jars = task.classpath.files*.name

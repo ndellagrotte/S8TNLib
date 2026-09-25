@@ -1,6 +1,6 @@
 package com.gtnewhorizon.gtnhlib.client.renderer;
 
-import static com.gtnewhorizon.gtnhlib.bytebuf.MemoryUtilities.*;
+import static org.lwjgl.system.MemoryUtil.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.nio.ByteBuffer;

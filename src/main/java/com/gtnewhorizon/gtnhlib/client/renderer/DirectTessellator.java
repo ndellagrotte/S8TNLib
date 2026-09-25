@@ -1,6 +1,6 @@
 package com.gtnewhorizon.gtnhlib.client.renderer;
 
-import static com.gtnewhorizon.gtnhlib.bytebuf.MemoryUtilities.*;
+import static org.lwjgl.system.MemoryUtil.*;
 
 import java.nio.ByteBuffer;
 
@@ -291,7 +291,7 @@ public class DirectTessellator {
 
     /**
      * Allocates a new ByteBuffer with the contents of the tessellator's draw. <br>
-     * The buffer needs to be freed with {@link com.gtnewhorizon.gtnhlib.bytebuf.MemoryUtilities#memFree}
+     * The buffer needs to be freed with {@link org.lwjgl.system.MemoryUtil#memFree}
      *
      * @return The buffer copy
      */

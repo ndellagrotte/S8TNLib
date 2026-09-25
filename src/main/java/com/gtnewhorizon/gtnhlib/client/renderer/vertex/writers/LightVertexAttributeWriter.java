@@ -1,6 +1,6 @@
 package com.gtnewhorizon.gtnhlib.client.renderer.vertex.writers;
 
-import static com.gtnewhorizon.gtnhlib.bytebuf.MemoryUtilities.*;
+import static org.lwjgl.system.MemoryUtil.*;
 import static com.gtnewhorizon.gtnhlib.client.renderer.cel.util.ModelQuadUtil.*;
 
 import com.gtnewhorizon.gtnhlib.client.renderer.DirectTessellator;

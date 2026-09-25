@@ -1,7 +1,7 @@
 package com.gtnewhorizon.gtnhlib.client.renderer;
 
 import com.google.common.annotations.Beta;
-import com.gtnewhorizon.gtnhlib.bytebuf.MemoryUtilities;
+import org.lwjgl.system.MemoryUtil;
 import com.gtnewhorizon.gtnhlib.client.renderer.vao.IVertexArrayObject;
 import com.gtnewhorizon.gtnhlib.client.renderer.vao.VertexBufferType;
 import com.gtnewhorizon.gtnhlib.client.renderer.vertex.VertexFlags;
@@ -57,7 +57,7 @@ public final class TessellatorManager {
     // The cleaning action holds only the address: a reference to the tessellator would keep it reachable.
     private static void freeWhenUnreachable(DirectTessellator tessellator) {
         final long baseAddress = tessellator.baseAddress;
-        CLEANER.register(tessellator, () -> MemoryUtilities.nmemFree(baseAddress));
+        CLEANER.register(tessellator, () -> MemoryUtil.nmemFree(baseAddress));
     }
 
     private static DirectTessellator getDirectTessellator() {

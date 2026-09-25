@@ -149,8 +149,8 @@ KEPT = tuple(f"{PKG}/{c}.java" for c in (
     "util/font/IFontParameters",
 ))
 assert len(set(KEPT)) == 60, len(set(KEPT))
+# MemoryUtilitiesTest was the other one, until 0.3.0 dropped bytebuf.
 ACTINIUM_TESTS = tuple(f"{PKG}/{c}.java" for c in (
-    "bytebuf/MemoryUtilitiesTest",
     "client/renderer/TessellatorManagerTest",
 ))
 # Kept only if it passes unmodified against the ported renderer.

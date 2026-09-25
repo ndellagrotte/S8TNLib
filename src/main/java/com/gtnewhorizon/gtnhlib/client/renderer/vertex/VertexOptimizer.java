@@ -1,7 +1,5 @@
 package com.gtnewhorizon.gtnhlib.client.renderer.vertex;
 
-import static com.gtnewhorizon.gtnhlib.bytebuf.MemoryUtilities.*;
-
 import java.nio.ByteBuffer;
 
 import org.lwjgl.opengl.GL11;

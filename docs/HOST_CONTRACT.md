@@ -55,7 +55,7 @@ which the host's runtime provides:
 | Library | Used by | Notes |
 |---|---|---|
 | Minecraft 1.12.2, client | `TessellatorManager`: `Tessellator`, `BufferBuilder`, `VertexFormat`, `VertexFormatElement`. `PostProcessingBridge` and `DepthTextureProvider`: `EntityRenderer`, `DynamicTexture`, `Framebuffer`, `EntityLivingBase`. `ModelQuadFacing`: `EnumFacing` | MCP names, remapped with the mod jar |
-| LWJGL 3, core and OpenGL | `bytebuf`: `MemoryUtil`, `PointerBuffer`, `CustomBuffer`, `BufferUtils`, `Platform`, `Pointer`. `GLCaps`, `UniversalVAO`, `vao`, `vbo` and `vertex`: `GL11` to `GL44`, `EXTFramebufferObject` | Compiled against 3.4.1. `bytebuf/Pointer` avoids `Platform.Architecture.is64Bit()`, which LWJGL 3.3 lacks, because Cleanroom ships 3.3.x at runtime, as its comment says |
+| LWJGL 3, core and OpenGL | `DirectTessellator`, `TessellatorManager`, `IndexBuffer`, `VertexFormat` and the vertex writers: `MemoryUtil`. `GLCaps`, `UniversalVAO`, `vao`, `vbo` and `vertex`: `GL11` to `GL44`, `EXTFramebufferObject` | 3.4.1, which Cleanroom 0.6.12 ships |
 | lwjglx | `GLCaps`, `UniversalVAO`: `GLContext`, `ContextCapabilities` | Cleanroom's LWJGL 2 compatibility layer |
 | JOML | `NormI8`, `VertexFormat` and the vertex writers: `Vector3f`, `Matrix4fc`, `Math` | 1.10.9, Cleanroom's copy |
 | fastutil | `VBOManager`: `Int2ObjectMap`, `Int2ObjectOpenHashMap` | |

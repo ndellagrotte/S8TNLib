@@ -1,6 +1,6 @@
 package com.gtnewhorizon.gtnhlib.client.renderer.vertex;
 
-import static com.gtnewhorizon.gtnhlib.bytebuf.MemoryUtilities.*;
+import static org.lwjgl.system.MemoryUtil.*;
 import static com.gtnewhorizon.gtnhlib.client.renderer.vertex.VertexFlags.*;
 
 import java.nio.ByteBuffer;

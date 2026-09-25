@@ -1,6 +1,6 @@
 package com.gtnewhorizon.gtnhlib.client.renderer.vao;
 
-import static com.gtnewhorizon.gtnhlib.bytebuf.MemoryUtilities.*;
+import static org.lwjgl.system.MemoryUtil.*;
 
 import java.nio.ByteBuffer;
 
@@ -69,7 +69,7 @@ public final class IndexBuffer {
     /**
      * Allocates a buffer that contains the needed indices to map GL_QUADS into GL_TRIANGLES.
      * <p>
-     * Buffer must be freed via {@link com.gtnewhorizon.gtnhlib.bytebuf.MemoryUtilities#memFree(ByteBuffer)} afterwards.
+     * Buffer must be freed via {@link org.lwjgl.system.MemoryUtil#memFree(ByteBuffer)} afterwards.
      */
     private static ByteBuffer createQuadEBOBuffer(int vertexCount) {
         return createQuadEBOBuffer(0, vertexCount);
@@ -78,7 +78,7 @@ public final class IndexBuffer {
     /**
      * Allocates a buffer that contains the needed indices to map GL_QUADS into GL_TRIANGLES.
      * <p>
-     * Buffer must be freed via {@link com.gtnewhorizon.gtnhlib.bytebuf.MemoryUtilities#memFree(ByteBuffer)} afterwards.
+     * Buffer must be freed via {@link org.lwjgl.system.MemoryUtil#memFree(ByteBuffer)} afterwards.
      */
     private static ByteBuffer createQuadEBOBuffer(int start, int end) {
         final int quadCount = (end - start) / 4;

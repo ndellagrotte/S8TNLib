@@ -9,10 +9,9 @@ governs the file. This is an inventory, not legal advice.
 
 | Component | Upstream | Paths in S8TNLib | Terms | In the jar |
 |---|---|---|---|---|
-| GTNHLib | https://github.com/GTNewHorizons/GTNHLib at `9644810c` (release `0.9.59`, tag `gtnhlib-base/9644810c00`) | `src/main/java`: the 55 kept files that upstream has, 27 of them verbatim. `src/test/java`: `VertexFormatTest` | LGPL-3.0 ([`LICENSE-LGPL-3.0.txt`](LICENSE-LGPL-3.0.txt)), plus the file-level notices below | yes, except the test |
-| Actinium's port of GTNHLib | https://github.com/DHJComical/Actinium, its `GTNHLib/` up to `4a19c959` | its changes to the 27 adapted files; the 3 files it added, `RuntimeOptionsBridge`, `PostProcessingBridge` and `DepthTextureProvider`; its tests `MemoryUtilitiesTest` and `TessellatorManagerTest` | LGPL-3.0 or GPL-3.0 (unstated). S8TNLib conveys it under GPL-3.0 (see [S8TNLib's license](#s8tnlibs-license)) | yes, except the tests |
-| S8TNLib's own changes | this repository, since `v0.1.1` ([`docs/PROVENANCE.md`](docs/PROVENANCE.md#after-the-syncline)) | `bytebuf/`: `APIUtil`, `CheckIntrinsics`, `MemoryUtilities`, `MultiReleaseMemCopy`, `MultiReleaseTextDecoding`, `Pointer` and `StackWalkUtil`; `client/renderer/TessellatorManager`; the tests `PointerBufferTest`, `StackWalkUtilTest` and `TessellatorManagerBuffersTest` | GPL-3.0 ([`LICENSE`](LICENSE)) | yes, except the tests |
-| LWJGL | https://github.com/LWJGL/lwjgl3 | 9 of the 11 files in `bytebuf/`: `APIUtil`, `CheckIntrinsics`, `Checks`, `MemoryManage`, `MemoryStack`, `MemoryUtilities`, `MultiReleaseMemCopy`, `Pointer` and `StackWalkUtil` | LWJGL's BSD-style license, which their headers link: https://www.lwjgl.org/license | yes |
+| GTNHLib | https://github.com/GTNewHorizons/GTNHLib at `9644810c` (release `0.9.59`, tag `gtnhlib-base/9644810c00`) | `src/main/java`: the 44 kept files that upstream has, 23 of them verbatim. `src/test/java`: `VertexFormatTest`, whose import S8TNLib changed | LGPL-3.0 ([`LICENSE-LGPL-3.0.txt`](LICENSE-LGPL-3.0.txt)), plus the file-level notices below | yes, except the test |
+| Actinium's port of GTNHLib | https://github.com/DHJComical/Actinium, its `GTNHLib/` up to `4a19c959` | its changes to the adapted files; the 3 files it added, `RuntimeOptionsBridge`, `PostProcessingBridge` and `DepthTextureProvider`; its test `TessellatorManagerTest` | LGPL-3.0 or GPL-3.0 (unstated). S8TNLib conveys it under GPL-3.0 (see [S8TNLib's license](#s8tnlibs-license)) | yes, except the tests |
+| S8TNLib's own changes | this repository, since `v0.1.1` ([`docs/PROVENANCE.md`](docs/PROVENANCE.md#after-the-syncline)) | `client/renderer/TessellatorManager`; the `MemoryUtil` imports of 10 files and `VertexFormatTest`; the test `TessellatorManagerBuffersTest` | GPL-3.0 ([`LICENSE`](LICENSE)) | yes, except the tests |
 | ASM | https://asm.ow2.io | `asm/ClassConstantPoolParser`, derived from ASM's `ClassReader` | the three-clause BSD license in its header, Copyright (c) 2000-2011 INRIA, France Telecom | yes |
 
 The Gradle build and `scripts/provenance_audit.py` are adapted from
@@ -31,8 +30,7 @@ On 2026-09-24 the maintainer chose GPL-3.0 for S8TNLib as a whole
 ([`LICENSE`](LICENSE)). It holds under either reading: LGPL-3.0 is GPL-3.0
 plus additional permissions, which section 7 of GPL-3.0 lets a redistributor
 remove. File headers still govern their files: GTNHLib's LGPL-3.0 text
-stays, as `LICENSE-LGPL-3.0.txt`, and the LWJGL and ASM files keep their BSD
-notices
+stays, as `LICENSE-LGPL-3.0.txt`, and the ASM file keeps its BSD notice
 ([`docs/PROVENANCE.md`](docs/PROVENANCE.md#license)).
 
 ## Not in the jar
@@ -40,8 +38,8 @@ notices
 - **License texts.** The jar carries no license or notice file: the host
   merges it into its mod jar, where root files would collide with the host's
   own. A distribution that contains S8TNLib's classes must carry the GPL-3.0
-  text ([`LICENSE`](LICENSE)) and the LWJGL and ASM notices, whose BSD terms
-  ask binary copies to reproduce them.
+  text ([`LICENSE`](LICENSE)) and the ASM notice, whose BSD terms
+  asks binary copies to reproduce it.
 - **Compile-only libraries,** resolved at build time and never bundled:
   Minecraft 1.12.2 and Cleanroom `0.6.12-alpha`, with the libraries they
   bring; LWJGL 3.4.1 and lwjglx 1.0.0; JOML 1.10.9; fastutil 8.5.18; Lombok
