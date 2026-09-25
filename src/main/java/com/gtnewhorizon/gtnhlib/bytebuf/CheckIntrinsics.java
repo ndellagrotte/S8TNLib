@@ -12,45 +12,24 @@ import org.lwjgl.system.MemoryUtil;
  * Simple index checks.
  *
  * <p>
- * On Java 9 these checks are replaced with the corresponding {@link java.util.Objects} methods, which perform better.
+ * They are the corresponding {@link java.util.Objects} methods. S8TNLib compiles for Java 21, so LWJGL's Java 8
+ * fallbacks and the {@code classVersion()} marker of the multi-release variants are gone.
  * </p>
  */
 public final class CheckIntrinsics {
 
     private CheckIntrinsics() {}
 
-    public static int classVersion() {
-        return Runtime.version().feature() >= 17 ? 17 : 8;
-    }
-
     public static int checkIndex(int index, int length) {
-        if (Runtime.version().feature() >= 9) {
-            return Objects.checkIndex(index, length);
-        }
-        if (index < 0 || length <= index) {
-            throw new IndexOutOfBoundsException();
-        }
-        return index;
+        return Objects.checkIndex(index, length);
     }
 
     public static int checkFromToIndex(int fromIndex, int toIndex, int length) {
-        if (Runtime.version().feature() >= 9) {
-            return Objects.checkFromToIndex(fromIndex, toIndex, length);
-        }
-        if (fromIndex < 0 || toIndex < fromIndex || length < toIndex) {
-            throw new IndexOutOfBoundsException();
-        }
-        return fromIndex;
+        return Objects.checkFromToIndex(fromIndex, toIndex, length);
     }
 
     public static int checkFromIndexSize(int fromIndex, int size, int length) {
-        if (Runtime.version().feature() >= 9) {
-            return Objects.checkFromIndexSize(fromIndex, size, length);
-        }
-        if ((length | fromIndex | size) < 0 || length - fromIndex < size) {
-            throw new IndexOutOfBoundsException();
-        }
-        return fromIndex;
+        return Objects.checkFromIndexSize(fromIndex, size, length);
     }
 
     public static ByteBuffer NewDirectByteBuffer(long address, int capacity) {

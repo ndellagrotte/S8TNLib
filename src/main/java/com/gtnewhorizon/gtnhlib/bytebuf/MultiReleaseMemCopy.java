@@ -9,10 +9,6 @@ final class MultiReleaseMemCopy {
 
     private MultiReleaseMemCopy() {}
 
-    public static int classVersion() {
-        return Runtime.version().feature() >= 17 ? 17 : 8;
-    }
-
     static void copy(long src, long dst, long bytes) {
         MemoryUtil.memCopy(src, dst, bytes);
     }
