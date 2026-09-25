@@ -107,7 +107,7 @@ adapted, 2 moved to Demonica, none added.
 
 ### 0.3.0
 
-Against `v0.2.0`: 37 files verbatim, 10 adapted, 11 dropped, none added.
+Against `v0.2.0`: 37 files verbatim, 10 adapted, 11 dropped, 2 added.
 
 - `bytebuf` is gone ([ledger](#dropbytebuf)). Its files were LWJGL 3 code,
   and Cleanroom 0.6.12 ships LWJGL 3.4.1, where each has a counterpart in
@@ -117,6 +117,13 @@ Against `v0.2.0`: 37 files verbatim, 10 adapted, 11 dropped, none added.
 - The tests of `bytebuf`, `MemoryUtilitiesTest`, `PointerBufferTest` and
   `StackWalkUtilTest`, go with it: they would test LWJGL now.
   `VertexFormatTest` imports `MemoryUtil`, so it is no longer upstream's.
+- S8TNLib is a mod that players install next to Demonica, which no longer
+  merges it into its own jar. The 2 added files are S8TNLib's own, outside
+  upstream's package: `com.s8tnlib.S8TNLib`, an `@Mod` that does nothing,
+  and `S8TNLibLoadingPlugin`, which makes the jar a coremod so that Cleanroom
+  loads it while coremods load. `src/main/resources/mcmod.info` is back, as
+  S8TNLib's own, and its ledger row went. The jar is remapped to SRG and
+  carries `LICENSE` and `THIRD_PARTY_NOTICES.md`.
 
 ## What is kept
 
@@ -581,7 +588,6 @@ with two columns:
 | `src/main/java/com/gtnewhorizon/gtnhlib/api/` | 1.7.10-only: interfaces of dropped features, including CapturingTesselator, which Actinium never imported |
 | `src/main/java/com/gtnewhorizon/gtnhlib/compat/FalseTweaks.java` | 1.7.10-only: compat with FalseTweaks, a 1.7.10 mod |
 | `src/main/java/com/gtnewhorizon/gtnhlib/compat/NotEnoughItemsVersionChecker.java` | 1.7.10-only: checks that GTNH's NotEnoughItems supports RenderTooltipEvent |
-| `src/main/resources/mcmod.info` | 1.7.10-only: mod metadata. S8TNLib is a library, not a mod |
 
 ### drop(render-effects)
 

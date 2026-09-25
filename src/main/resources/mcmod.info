@@ -1,0 +1,11 @@
+[{
+  "modid": "s8tnlib",
+  "name": "S8TNLib",
+  "version": "${version}",
+  "mcversion": "1.12.2",
+  "description": "GTNHLib ported to Minecraft 1.12.2 on Cleanroom: the renderer library Demonica requires.",
+  "authorList": ["Nicholas DellaGrotte"],
+  "credits": "GTNHLib (GTNewHorizons, mitchej123), Actinium's 1.12.2 port (DHJComical)",
+  "url": "https://github.com/ndellagrotte/S8TNLib",
+  "updateJSON": ""
+}]

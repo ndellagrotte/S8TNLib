@@ -1,12 +1,14 @@
 /*
  * S8TNLib: GTNHLib ported to Minecraft 1.12.2 on Cleanroom, for Demonica (docs/PROVENANCE.md).
  *
- * The jar is an MCP-named library: com.gtnewhorizon.gtnhlib classes only, with no mod metadata, mixins or access
- * transformer, and no SRG remap. Demonica merges it into its mod jar and remaps that. The host supplies every
- * library at runtime, so they are all compileOnly here.
+ * The jar is a mod that players install next to Demonica (docs/HOST_CONTRACT.md): the com.gtnewhorizon.gtnhlib
+ * classes, a do-nothing mod and loading plugin in com.s8tnlib, mcmod.info, and the license files. It is remapped to
+ * SRG, and its manifest makes it a coremod that also contains a mod, so Cleanroom puts it on the LaunchClassLoader
+ * while coremods load. The host supplies every library at runtime, so they are all compileOnly here.
  *
- * publishToMavenLocal publishes the jar and its sources jar as com.s8tnlib:s8tnlib, once verifyPublishedJars has
- * checked them. Both are at the end of this file.
+ * The release assets are the remapped jar, its sources jar and SHA256SUMS; CI builds them for a v* tag and creates
+ * the GitHub release. publishToMavenLocal publishes the same jars as com.s8tnlib:s8tnlib, for convenience, once
+ * verifyPublishedJars has checked them. Both are at the end of this file.
  */
 plugins {
     id 'java'
@@ -48,8 +50,10 @@ unimined.minecraft {
         off = true
     }
 
-    // A library jar, MCP-named: the host remaps the mod jar it is merged into.
     defaultRemapJar = false
+
+    // The distributed jar: the jar remapped to SRG, the names Minecraft has in production.
+    remap(tasks.named('jar').get())
 }
 
 // The LWJGL natives the tests load, from Actinium's GTNHLib build.
@@ -173,6 +177,14 @@ tasks.withType(JavaCompile).configureEach {
     doFirst('requireLwjgl3BeforeLwjglx') { requireLwjgl3BeforeLwjglx(it) }
 }
 
+processResources {
+    def resourceProperties = [version: project.version.toString()]
+    inputs.properties(resourceProperties)
+    filesMatching('mcmod.info') {
+        expand(resourceProperties)
+    }
+}
+
 tasks.named('test', Test).configure {
     useJUnitPlatform()
     jvmArgs '--enable-native-access=ALL-UNNAMED', '--sun-misc-unsafe-memory-access=allow'
@@ -184,7 +196,8 @@ tasks.named('test', Test).configure {
 
 /*
  * Publishing: publishToMavenLocal publishes com.s8tnlib:s8tnlib, the jar and its sources jar, with a POM and Gradle
- * module metadata. mavenLocal is the only target, so no repository is declared. Every library is compileOnly, so
+ * module metadata. Nothing resolves it from there (Demonica takes the release assets); it is kept for local
+ * experiments. mavenLocal is the only target, so no repository is declared. Every library is compileOnly, so
  * neither file declares a dependency.
  *
  * Unimined would strip a mod's published dependencies and drop its module metadata (cleanModPom). S8TNLib declares no
@@ -198,6 +211,14 @@ publishing {
             from components.java
         }
     }
+}
+
+// remapJar writes the SRG jar over the jar task's file, which the publication names: whatever reads it waits for it.
+tasks.withType(GenerateModuleMetadata).configureEach {
+    dependsOn tasks.named('remapJar')
+}
+tasks.withType(AbstractPublishToMaven).configureEach {
+    dependsOn tasks.named('remapJar')
 }
 
 // The commit the jars are built from, with -dirty while tracked files differ from it. Demonica pins it.
@@ -216,25 +237,40 @@ def s8tnlibManifest = [
     'S8TNLib-Synced-From': "demonica@${property('s8tnlib_synced_from')}".toString()
 ]
 
+// Cleanroom loads a mods-folder jar while coremods load only if its manifest names an FMLCorePlugin, and the host's
+// coremod code needs these classes then. FMLCorePluginContainsFMLMod keeps the jar a mod, so FML finds @Mod S8TNLib.
+def fmlManifest = [
+    'FMLCorePlugin': 'com.s8tnlib.S8TNLibLoadingPlugin',
+    'FMLCorePluginContainsFMLMod': 'true'
+]
+
 [tasks.named('jar', Jar), tasks.named('sourcesJar', Jar)].each { jarTask ->
     jarTask.configure {
         // Declared, so that a new commit rebuilds the jars even when their contents are unchanged.
         inputs.property('s8tnlibCommit', s8tnlibCommit)
         manifest.attributes(s8tnlibManifest)
         manifest.attributes('S8TNLib-Commit': s8tnlibCommit)
+        // The jars are distributed on their own, so they carry the license and the notices.
+        from files('LICENSE', 'THIRD_PARTY_NOTICES.md')
     }
 }
 
+tasks.named('jar', Jar).configure {
+    manifest.attributes(fmlManifest)
+    finalizedBy tasks.named('remapJar')
+}
+
 /**
- * Demonica merges the jar into its mod jar. So the jar holds com/gtnewhorizon/gtnhlib classes and its manifest, and
- * nothing else: no mod metadata, mixin configs, nested jars, FML attributes or notices at its root. The sources jar
- * holds their sources, and neither the POM nor the module metadata declares a dependency.
+ * The remapped jar holds the com/gtnewhorizon/gtnhlib and com/s8tnlib classes, mcmod.info, the license files and its
+ * manifest, which names the loading plugin. It holds no bytebuf package: LWJGL's org.lwjgl.system replaced it. The
+ * sources jar holds their sources and the same other files, and neither the POM nor the module metadata declares a
+ * dependency.
  */
 def verifyPublishedJars = tasks.register('verifyPublishedJars') {
     group = 'verification'
-    description = 'Checks the jars, POM and Gradle module metadata that publishToMavenLocal publishes.'
+    description = 'Checks the remapped jar, the sources jar, the POM and the Gradle module metadata.'
 
-    def jarFile = tasks.named('jar', Jar).flatMap { it.archiveFile }
+    def jarFile = tasks.named('remapJar').flatMap { it.archiveFile }
     def sourcesJarFile = tasks.named('sourcesJar', Jar).flatMap { it.archiveFile }
     def pomTask = tasks.named('generatePomFileForMavenPublication', GenerateMavenPom)
     def moduleFile = tasks.named('generateMetadataFileForMavenPublication', GenerateModuleMetadata)
@@ -247,24 +283,30 @@ def verifyPublishedJars = tasks.register('verifyPublishedJars') {
 
     doLast {
         def problems = []
-        def packageDir = 'com/gtnewhorizon/gtnhlib/'
-        def expected = expectedManifest + ['S8TNLib-Commit': s8tnlibCommit.get()]
-        // Checks one jar, and returns its files under packageDir that end with suffix, without the suffix.
-        def readJar = { File file, String suffix ->
+        def packageDirs = ['com/gtnewhorizon/gtnhlib/', 'com/s8tnlib/']
+        def rootFiles = ['mcmod.info', 'LICENSE', 'THIRD_PARTY_NOTICES.md', 'META-INF/MANIFEST.MF']
+        def commit = ['S8TNLib-Commit': s8tnlibCommit.get()]
+        // Checks one jar, and returns its files under packageDirs that end with suffix, without the suffix.
+        def readJar = { File file, String suffix, Map expected ->
             def found = [] as Set
             new java.util.jar.JarFile(file).withCloseable { jar ->
+                def names = [] as Set
                 jar.entries().each { entry ->
                     def name = entry.name
-                    if (entry.directory) {
-                        if (name != 'META-INF/' && !packageDir.startsWith(name) && !name.startsWith(packageDir)) {
+                    names << name
+                    if (name.startsWith('com/gtnewhorizon/gtnhlib/bytebuf/')) {
+                        problems << "${file.name}: ${name}: bytebuf is gone, org.lwjgl.system replaces it"
+                    } else if (entry.directory) {
+                        if (name != 'META-INF/' && !packageDirs.any { it.startsWith(name) || name.startsWith(it) }) {
                             problems << "${file.name}: unexpected directory ${name}"
                         }
-                    } else if (name.startsWith(packageDir) && name.endsWith(suffix)) {
+                    } else if (packageDirs.any { name.startsWith(it) } && name.endsWith(suffix)) {
                         found << name.substring(0, name.length() - suffix.length())
-                    } else if (name != 'META-INF/MANIFEST.MF') {
+                    } else if (!(name in rootFiles)) {
                         problems << "${file.name}: unexpected entry ${name}"
                     }
                 }
+                (rootFiles - names).each { problems << "${file.name}: missing entry ${it}" }
                 def manifest = jar.manifest?.mainAttributes?.collectEntries { key, value -> [(key.toString()): value] }
                 if (manifest != expected) {
                     problems << "${file.name}: manifest attributes are ${manifest}, expected ${expected}"
@@ -272,8 +314,10 @@ def verifyPublishedJars = tasks.register('verifyPublishedJars') {
             }
             found
         }
-        def classes = readJar(jarFile.get().asFile, '.class')
-        def sources = readJar(sourcesJarFile.get().asFile, '.java')
+        // Unimined's remapper marks every jar it remaps with Fabric-Loom-Mixin-Remap-Type, which Forge ignores.
+        def remapped = ['Fabric-Loom-Mixin-Remap-Type': 'mixin']
+        def classes = readJar(jarFile.get().asFile, '.class', expectedManifest + fmlManifest + commit + remapped)
+        def sources = readJar(sourcesJarFile.get().asFile, '.java', expectedManifest + commit)
         // Every class, inner ones included, comes from a source file, and every source file but package-info
         // compiles to its own class.
         def outerClasses = classes.collect { it.replaceFirst(/\$.*/, '') } as Set
