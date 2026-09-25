@@ -90,8 +90,10 @@ instead, so the host routes those draws into the capture.
   `IllegalStateException` when `shouldInterceptBufferBuilderDraw()` is
   false.
 - Captures are per thread, so a capture never takes another thread's draws.
-  Each thread that captures allocates two native buffers of
-  `DEFAULT_BUFFER_SIZE`, 32 KiB each, which are never freed.
+  A thread's first plain capture allocates its main native buffer, and its
+  first callback capture a second one, `DEFAULT_BUFFER_SIZE` = 32 KiB each.
+  S8TNLib frees them once the thread has ended and been collected. Up to
+  0.1.1, both were allocated on the first capture and never freed.
 - `MixinTessellator` also implements `ITessellatorInstance` on `Tessellator`.
   S8TNLib reads it only in `shouldInterceptDraw(Tessellator)`, which nothing
   calls. Neither S8TNLib nor Demonica calls `discard()` or sets the

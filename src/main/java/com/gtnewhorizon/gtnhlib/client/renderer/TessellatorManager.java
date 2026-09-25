@@ -1,10 +1,12 @@
 package com.gtnewhorizon.gtnhlib.client.renderer;
 
 import com.google.common.annotations.Beta;
+import com.gtnewhorizon.gtnhlib.bytebuf.MemoryUtilities;
 import com.gtnewhorizon.gtnhlib.client.renderer.vao.IVertexArrayObject;
 import com.gtnewhorizon.gtnhlib.client.renderer.vao.VertexBufferType;
 import com.gtnewhorizon.gtnhlib.client.renderer.vertex.VertexFlags;
 import com.gtnewhorizon.gtnhlib.client.renderer.vertex.VertexFormat;
+import java.lang.ref.Cleaner;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
@@ -17,10 +19,12 @@ public final class TessellatorManager {
     // list recording on the client thread) must never intercept draws issued by
     // another thread (e.g. CustomLoadingScreen's splash renderer), otherwise the
     // foreign draw lands in the owner's tessellator and corrupts state.
-    private static final ThreadLocal<DirectTessellator> mainInstance =
-        ThreadLocal.withInitial(() -> new DirectTessellator(DEFAULT_BUFFER_SIZE, false));
-    private static final ThreadLocal<CallbackTessellator> mainCallbackInstance =
-        ThreadLocal.withInitial(() -> new CallbackTessellator(DEFAULT_BUFFER_SIZE, false));
+    // A thread's main instances are created on its first use of each, and CLEANER
+    // frees their base buffers once they are unreachable, which is after the thread
+    // has ended: with deleteAfter = false, nothing else frees them.
+    private static final ThreadLocal<DirectTessellator> mainInstance = new ThreadLocal<>();
+    private static final ThreadLocal<CallbackTessellator> mainCallbackInstance = new ThreadLocal<>();
+    private static final Cleaner CLEANER = Cleaner.create();
     private static final ThreadLocal<DirectTessellator[]> directTessellators =
         ThreadLocal.withInitial(() -> new DirectTessellator[DIRECT_TESSELLATOR_STACK_DEPTH]);
 
@@ -28,6 +32,32 @@ public final class TessellatorManager {
     private static final ThreadLocal<Boolean> mainInstanceInStack = ThreadLocal.withInitial(() -> false);
 
     private TessellatorManager() {
+    }
+
+    private static DirectTessellator getMainInstance() {
+        DirectTessellator tessellator = mainInstance.get();
+        if (tessellator == null) {
+            tessellator = new DirectTessellator(DEFAULT_BUFFER_SIZE, false);
+            freeWhenUnreachable(tessellator);
+            mainInstance.set(tessellator);
+        }
+        return tessellator;
+    }
+
+    private static CallbackTessellator getMainCallbackInstance() {
+        CallbackTessellator tessellator = mainCallbackInstance.get();
+        if (tessellator == null) {
+            tessellator = new CallbackTessellator(DEFAULT_BUFFER_SIZE, false);
+            freeWhenUnreachable(tessellator);
+            mainCallbackInstance.set(tessellator);
+        }
+        return tessellator;
+    }
+
+    // The cleaning action holds only the address: a reference to the tessellator would keep it reachable.
+    private static void freeWhenUnreachable(DirectTessellator tessellator) {
+        final long baseAddress = tessellator.baseAddress;
+        CLEANER.register(tessellator, () -> MemoryUtilities.nmemFree(baseAddress));
     }
 
     private static DirectTessellator getDirectTessellator() {
@@ -38,8 +68,10 @@ public final class TessellatorManager {
         return directTessellatorIndex.get() != -1;
     }
 
+    // Compares against the instances that exist, without creating them: a thread that has none holds nulls.
     private static boolean isMainTessellator(DirectTessellator tessellator) {
-        return tessellator == mainInstance.get() || tessellator == mainCallbackInstance.get();
+        return tessellator != null
+                && (tessellator == mainInstance.get() || tessellator == mainCallbackInstance.get());
     }
 
     private static void setDirectTessellator(DirectTessellator tessellator) {
@@ -54,8 +86,8 @@ public final class TessellatorManager {
 
     public static DirectTessellator startCapturingDirect() {
         if (!mainInstanceInStack.get()) {
-            setDirectTessellator(mainInstance.get());
-            return mainInstance.get();
+            setDirectTessellator(getMainInstance());
+            return getMainInstance();
         }
         final DirectTessellator tessellator = new DirectTessellator(DEFAULT_BUFFER_SIZE);
         setDirectTessellator(tessellator);
@@ -64,8 +96,8 @@ public final class TessellatorManager {
 
     public static DirectTessellator startCapturingDirect(int capacity) {
         if (!mainInstanceInStack.get() && DEFAULT_BUFFER_SIZE >= capacity) {
-            setDirectTessellator(mainInstance.get());
-            return mainInstance.get();
+            setDirectTessellator(getMainInstance());
+            return getMainInstance();
         }
         final DirectTessellator tessellator = new DirectTessellator(capacity);
         setDirectTessellator(tessellator);
@@ -81,7 +113,7 @@ public final class TessellatorManager {
     @Beta
     public static CallbackTessellator startCapturingDirect(DirectDrawCallback callback) {
         if (!mainInstanceInStack.get()) {
-            final CallbackTessellator tessellator = mainCallbackInstance.get();
+            final CallbackTessellator tessellator = getMainCallbackInstance();
             tessellator.setDrawCallback(callback);
             setDirectTessellator(tessellator);
             return tessellator;
