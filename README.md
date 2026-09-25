@@ -24,12 +24,27 @@ players install: Demonica requires it.
 [`docs/PROVENANCE.md`](docs/PROVENANCE.md) records where each file comes
 from, what was dropped and why, and how the audit works.
 
+**Requires:**
+
+- Minecraft 1.12.2 with Cleanroom 0.6.12, on Java 21 or later.
+- The client only. A server needs no S8TNLib, and accepts clients with any
+  version of it.
+- Demonica 0.3.0 or later, which needs S8TNLib 0.3.0 or later. S8TNLib does
+  nothing without it.
+
 ## Installing
 
-Put `s8tnlib-<version>.jar` from the
-[GitHub releases](https://github.com/ndellagrotte/S8TNLib/releases) in
-`mods/`, next to Celeritas and Demonica. Demonica names the version it
-needs. S8TNLib does nothing by itself.
+Download `s8tnlib-<version>.jar` from the
+[GitHub releases](https://github.com/ndellagrotte/S8TNLib/releases) and put
+it in `mods/`, next to Celeritas and Demonica.
+
+- Demonica names the versions it accepts: Demonica 0.3.0 declares
+  `required-after:s8tnlib@[0.3.0,)`. Without S8TNLib, FML shows its
+  missing-mods screen.
+- Install 0.3.0 or later. Earlier releases are libraries that Demonica
+  merged into its own jar, not mods.
+- Each release's `SHA256SUMS` checks the download:
+  `sha256sum -c --ignore-missing SHA256SUMS`.
 
 ## The artifact
 
@@ -49,16 +64,31 @@ supplies: the Minecraft-side hooks, the providers and the runtime libraries.
 ## Building
 
 ```sh
-./gradlew build                  # compiles, runs the tests, and builds and verifies the jars
+./gradlew build                  # compiles, runs the tests, and builds, remaps and verifies the jars
 ./gradlew publishToMavenLocal    # publishes com.s8tnlib:s8tnlib to mavenLocal, for local experiments
 ```
 
-`build/libs/s8tnlib-<version>.jar` is the jar to install. Demonica's build
-takes a local build with `-Ps8tnlibDir=<S8TNLib>/build/libs`.
+`build/libs/s8tnlib-<version>.jar` is the mod jar, already remapped to SRG:
+it installs as a release's jar does.
+
+To build Demonica against a local build, pass it
+`-Ps8tnlibDir=<S8TNLib>/build/libs`. Demonica looks for the version in its
+own `s8tnlib_version`, so a build of `dev` also needs
+`-Ps8tnlib_version=<version>` (such as `0.4.0-SNAPSHOT`). With a local jar,
+Demonica's build reports its SHA-256 instead of checking it against the pin.
 
 The build runs on JDK 25, which Gradle provisions if it is missing, and
-compiles for Java 21. It needs git: each jar's manifest records the commit it
-was built from.
+compiles for Java 21. It needs:
+
+- git: each jar's manifest records the commit it was built from;
+- the network on the first build: Unimined downloads Minecraft 1.12.2, the
+  MCP mappings and Cleanroom to compile against and to remap the jar;
+- Windows, Linux or macOS: the tests load LWJGL's natives, and the build
+  stops on a platform that has none.
+
+Pushing an annotated `v<version>` tag makes CI build the jars and draft the
+GitHub release, with the three assets and the tag's message as its notes.
+Publishing the draft is the maintainer's step.
 
 ## License
 
