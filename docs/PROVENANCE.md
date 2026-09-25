@@ -80,6 +80,28 @@ byte identity with Demonica ends. The rules for that work:
 Gates 1 and 2 are checked at their tags, `actinium-checkpoint/4a19c959` and
 `v0.1.1`, since at `HEAD` they no longer hold.
 
+### 0.2.0
+
+The first release after the syncline. Against `v0.1.1`: 50 files verbatim, 8
+adapted, 2 moved to Demonica, none added.
+
+- `bytebuf`, the `PointerBuffer` path, which nothing in Demonica calls:
+  `memPointerBuffer` counts pointers instead of bytes, and `APIUtil`'s
+  `apiArray` variants return the start of the array, both inherited from
+  upstream; `memAddress(PointerBuffer)` no longer calls itself, which came in
+  with `actinium@83ea1b7c`; and `memRealloc(PointerBuffer, int)` reallocates
+  the block's start. `APIUtil` is no longer verbatim upstream.
+- `bytebuf`: the Java 8 branches are gone from `CheckIntrinsics`,
+  `MultiReleaseMemCopy`, `MultiReleaseTextDecoding` and `StackWalkUtil`, and
+  `Pointer.Default.address` is final again. S8TNLib compiles for Java 21.
+- `TessellatorManager` creates a thread's main capture buffers on first use
+  and frees them once the thread is unreachable. They had leaked since
+  `actinium@ddb017f1`.
+- `compat/Mods` and `util/font/IFontParameters` moved to Demonica
+  ([ledger](#dropdemonica-only)).
+- New tests: `bytebuf/PointerBufferTest`, `bytebuf/StackWalkUtilTest` and
+  `client/renderer/TessellatorManagerBuffersTest`.
+
 ## What is kept
 
 Demonica's code outside `GTNHLib/` (its root, `glsm` and `shader` projects)
@@ -256,14 +278,15 @@ git fetch --multiple upstream actinium demonica
 | `s8tnlib-source/61fa479d` | Demonica | the syncline. It keeps `61fa479d`, `1511a6bd` and `3d0db995` reachable if Demonica's history is rewritten, and is pushed only with the maintainer's go-ahead |
 | `actinium-checkpoint/4a19c959` | S8TNLib | the commit whose kept files and tests equal Actinium's |
 | `demonica-syncline/61fa479d` | S8TNLib | the merge to `dev` whose kept files equal Demonica's |
-| `v<version>` | S8TNLib | a release, such as `v0.1.0` and `v0.1.1` |
+| `v<version>` | S8TNLib | a release, such as `v0.1.0`, `v0.1.1` and `v0.2.0` |
 
 Release tags start with `v` because upstream's version tags, `0.1.0` among
 them, are already in this repository. The Maven coordinates are
 `com.s8tnlib:s8tnlib`, at `0.1.0-SNAPSHOT` during the port and `0.1.0` at the
 syncline. `0.1.1` has 0.1.0's classes: it is the first GitHub release, cut
-once the license was recorded. After a release, `dev` moves to the next
-`-SNAPSHOT`.
+once the license was recorded. `0.2.0` is the first release after the
+syncline ([After the syncline](#after-the-syncline)). After a release, `dev`
+moves to the next `-SNAPSHOT`.
 
 ## Commits
 

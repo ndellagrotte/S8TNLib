@@ -24,7 +24,7 @@ from, what was dropped and why, and how the audit works.
 
 ## The artifact
 
-`com.s8tnlib:s8tnlib:0.1.1`: the jar and its sources jar, published to
+`com.s8tnlib:s8tnlib:0.2.0`: the jar and its sources jar, published to
 `mavenLocal` only. Each
 [GitHub release](https://github.com/ndellagrotte/S8TNLib/releases) attaches
 the same two jars, built by CI from the release tag.

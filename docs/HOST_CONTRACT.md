@@ -4,8 +4,7 @@ S8TNLib is a library, not a mod. It registers nothing and hooks nothing by
 itself. A host mod on Minecraft 1.12.2 and Cleanroom merges it into its mod
 jar, supplies the Minecraft-side hooks and the providers, and runs it on the
 libraries that Minecraft and Cleanroom ship. Demonica is the only host. This
-page lists what the host supplies as of the syncline `demonica@61fa479d`, and
-how Demonica does it.
+page lists what the host supplies as of 0.2.0, and how Demonica does it.
 
 ## The artifact
 
