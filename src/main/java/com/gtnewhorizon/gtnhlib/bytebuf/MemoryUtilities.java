@@ -664,7 +664,7 @@ public final class MemoryUtilities {
         // return new PointerBuffer(memCalloc(Math.toIntExact(getAllocationSize(num, POINTER_SHIFT))));
 
         PointerBuffer buffer = memPointerBuffer(
-                nmemReallocChecked(ptr == null ? NULL : memAddress(ptr), getAllocationSize(size, POINTER_SHIFT)),
+                nmemReallocChecked(ptr == null ? NULL : ptr.address0(), getAllocationSize(size, POINTER_SHIFT)),
                 size);
         if (ptr != null) {
             buffer.position(min(ptr.position(), size));
@@ -826,13 +826,13 @@ public final class MemoryUtilities {
 
     /** PointerBuffer version of {@link #memAddress(ByteBuffer)}. */
     public static long memAddress(PointerBuffer buffer) {
-        return address(buffer.position(), POINTER_SHIFT, memAddress(buffer));
+        return buffer.address();
     }
 
     /** PointerBuffer version of {@link #memAddress(ByteBuffer, int)}. */
     public static long memAddress(PointerBuffer buffer, int position) {
         Objects.requireNonNull(buffer);
-        return address(position, POINTER_SHIFT, memAddress(buffer));
+        return buffer.address(position);
     }
 
     /** Polymorphic version of {@link #memAddress(ByteBuffer)}. */

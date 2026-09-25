@@ -8,10 +8,12 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
 import org.lwjgl.PointerBuffer;
+import org.lwjgl.system.MemoryUtil;
 
 /**
  * S8TNLib's own tests of the {@link PointerBuffer} path, which nothing in Demonica calls. Up to 0.1.1,
- * {@code memPointerBuffer} counted its capacity in bytes, so the buffer held an eighth of the pointers asked for.
+ * {@code memPointerBuffer} counted its capacity in bytes, so the buffer held an eighth of the pointers asked for, and
+ * {@code memAddress(PointerBuffer)} called itself until the stack overflowed.
  */
 class PointerBufferTest {
 
@@ -58,6 +60,40 @@ class PointerBufferTest {
             assertEquals(5, five.capacity());
             assertEquals(5, five.remaining());
             assertEquals(5L, five.get(4));
+        }
+    }
+
+    @Test
+    void memAddressOfAPointerBufferIsTheAddressAtItsPosition() {
+        PointerBuffer buffer = MemoryUtilities.memAllocPointer(4);
+        try {
+            buffer.position(2);
+            assertEquals(MemoryUtil.memAddress(buffer), MemoryUtilities.memAddress(buffer));
+            assertEquals(buffer.address0() + 2L * POINTER_SIZE, MemoryUtilities.memAddress(buffer));
+            assertEquals(MemoryUtil.memAddress(buffer, 3), MemoryUtilities.memAddress(buffer, 3));
+            assertEquals(buffer.address0() + 3L * POINTER_SIZE, MemoryUtilities.memAddress(buffer, 3));
+        } finally {
+            MemoryUtilities.nmemFree(buffer.address0());
+        }
+    }
+
+    @Test
+    void memReallocOfAPointerBufferKeepsItsValuesAndPosition() {
+        PointerBuffer buffer = MemoryUtilities.memAllocPointer(4);
+        for (int i = 0; i < 4; i++) {
+            buffer.put(i, 0x100L + i);
+        }
+        buffer.position(2);
+        // The block is grown's from here on, and only grown is freed.
+        PointerBuffer grown = MemoryUtilities.memRealloc(buffer, 8);
+        try {
+            assertEquals(8, grown.capacity());
+            assertEquals(2, grown.position());
+            for (int i = 0; i < 4; i++) {
+                assertEquals(0x100L + i, grown.get(i));
+            }
+        } finally {
+            MemoryUtilities.nmemFree(grown.address0());
         }
     }
 }
