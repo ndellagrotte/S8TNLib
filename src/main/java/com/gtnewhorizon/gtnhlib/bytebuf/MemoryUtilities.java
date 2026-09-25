@@ -1206,12 +1206,12 @@ public final class MemoryUtilities {
         if (CHECKS) {
             check(address);
         }
-        return PointerBuffer.create(memByteBuffer(address, capacity));
+        return PointerBuffer.create(address, capacity);
     }
 
     /** Like {@link #memPointerBuffer}, but returns {@code null} if {@code address} is {@link #NULL}. */
     public static @Nullable PointerBuffer memPointerBufferSafe(long address, int capacity) {
-        return address == NULL ? null : PointerBuffer.create(memByteBuffer(address, capacity));
+        return address == NULL ? null : PointerBuffer.create(address, capacity);
     }
 
     // --- [ Buffer duplication ] ---
