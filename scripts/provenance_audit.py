@@ -35,13 +35,17 @@ The manifest goes to stdout unless --expect-identical, --ledger or --write is
 given.
 
 Examples:
-  # The kept files equal Actinium's, then Demonica's:
+  # The kept files equal Actinium's at the checkpoint tag, then Demonica's
+  # at the syncline's release tag:
   scripts/provenance_audit.py --scope gtnhlib \\
       --a-ref 4a19c95952cb9710211d29bec3440e752b6a2d03 --a-layout actinium \\
-      --expect-identical
+      --b-ref actinium-checkpoint/4a19c959 --expect-identical
   scripts/provenance_audit.py --scope gtnhlib \\
       --a-ref 61fa479dcfd00e39b92bdeb84f03c5ec693f6a6f --a-layout demonica \\
-      --expect-identical
+      --b-ref v0.1.1 --expect-identical
+
+  # What S8TNLib changed since the syncline:
+  scripts/provenance_audit.py --scope main --a-ref v0.1.1 --a-layout s8tnlib
 
   # What S8TNLib changed relative to the base, and whether the ledger
   # accounts for every dropped file, against staged files:
@@ -70,6 +74,7 @@ LEDGER_REASONS = (
     "native on 1.12.2:",
     "unreachable from Demonica",
     "removed by actinium@",
+    "moved to Demonica:",
 )
 
 
@@ -96,8 +101,10 @@ def _under(rel: str, prefix: str) -> bool:
 
 
 PKG = "com/gtnewhorizon/gtnhlib"
-# Demonica's live set at 61fa479d: the compile closure of the GTNHLib classes
-# that Demonica's root, glsm and shader code names (docs/PROVENANCE.md).
+# The syncline's kept set, Demonica's live set at 61fa479d: the compile closure
+# of the GTNHLib classes that Demonica's root, glsm and shader code named
+# (docs/PROVENANCE.md). A file that leaves the tree after the syncline gets a
+# ledger row, so the gtnhlib scope is audited at the syncline's tags.
 KEPT = tuple(f"{PKG}/{c}.java" for c in (
     "asm/ClassConstantPoolParser",
     *(f"bytebuf/{c}" for c in (

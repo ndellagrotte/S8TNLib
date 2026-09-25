@@ -16,13 +16,19 @@ S8TNLib ports [GTNHLib](https://github.com/GTNewHorizons/GTNHLib) to Minecraft
   of GTNHLib. Actinium imported it in one commit, together with unrelated work
   (`actinium@83ea1b7c`), and kept changing it afterwards. S8TNLib replays that
   work theme by theme, and each commit names the Actinium commits it ports.
-- **What Demonica doesn't reach is dropped.** S8TNLib keeps the 60 main files
-  that Demonica's code reaches, Actinium's 2 GTNHLib tests, and upstream's
-  `VertexFormatTest` if it passes unmodified. Everything else is dropped, one
-  labeled commit per subsystem, and recorded in the [drop ledger](#drop-ledger).
+- **What Demonica doesn't reach is dropped.** S8TNLib kept the 60 main files
+  that Demonica's code reached at the syncline, Actinium's 2 GTNHLib tests,
+  and upstream's `VertexFormatTest` if it passes unmodified. Everything else
+  is dropped, one labeled commit per subsystem, and recorded in the
+  [drop ledger](#drop-ledger). Two of the 60 moved to Demonica in 0.2.0, so
+  58 remain.
 - **The syncline is exact.** At the syncline, every kept main file is
   byte-identical to Demonica's copy and every kept test to its source. A
-  [blob-SHA audit](#scopes-and-audits) proves it.
+  [blob-SHA audit](#scopes-and-audits) proves it, at `v0.1.0` and `v0.1.1`.
+- **After the syncline, S8TNLib changes on its own.** Demonica removed its
+  `GTNHLib/` when it switched to S8TNLib's jar, so there is no copy left to
+  equal. From 0.2.0 on, fixes and removals are S8TNLib's own, measured
+  against `v0.1.1` ([After the syncline](#after-the-syncline)).
 
 ## Base and syncline
 
@@ -48,6 +54,53 @@ Actinium's at that commit, except for two Demonica edits:
 The port first reaches Actinium's content, tagged
 `actinium-checkpoint/4a19c959`. The two Demonica edits then land last, in a
 commit of their own.
+
+## After the syncline
+
+`v0.1.0` and `v0.1.1` are the syncline's releases: their 60 kept files equal
+`demonica@61fa479d`. Demonica has had no `GTNHLib/` since it merged the
+switch to S8TNLib's jar, so from 0.2.0 on S8TNLib changes on its own, and
+byte identity with Demonica ends. The rules for that work:
+
+- **Measured against `v0.1.1`.** `scripts/provenance_audit.py --scope main
+  --a-ref v0.1.1 --a-layout s8tnlib` lists what changed since the syncline,
+  and `git diff --stat v0.1.1..` covers the tests.
+- **Own tests, in classes of S8TNLib's own,** so that Actinium's two tests
+  and upstream's `VertexFormatTest` stay verbatim: the `tests` and
+  `upstream-tests` scopes still hold at `HEAD`. A regression test runs red on
+  the old code before it runs green.
+- **Own subjects,** `fix(<area>):` and `refactor(<area>):`
+  ([Commits](#commits)). A file that moves to Demonica gets a ledger row,
+  `moved to Demonica:`, and its commit a `Moved-To:` trailer.
+- **Own edits touch only the lines they need.** Writing files from git
+  objects ([Rules](#rules)) is for ports.
+- **Own license.** S8TNLib's changes are made under GPL-3.0
+  ([License](#license)).
+
+Gates 1 and 2 are checked at their tags, `actinium-checkpoint/4a19c959` and
+`v0.1.1`, since at `HEAD` they no longer hold.
+
+### 0.2.0
+
+The first release after the syncline. Against `v0.1.1`: 50 files verbatim, 8
+adapted, 2 moved to Demonica, none added.
+
+- `bytebuf`, the `PointerBuffer` path, which nothing in Demonica calls:
+  `memPointerBuffer` counts pointers instead of bytes, and `APIUtil`'s
+  `apiArray` variants return the start of the array, both inherited from
+  upstream; `memAddress(PointerBuffer)` no longer calls itself, which came in
+  with `actinium@83ea1b7c`; and `memRealloc(PointerBuffer, int)` reallocates
+  the block's start. `APIUtil` is no longer verbatim upstream.
+- `bytebuf`: the Java 8 branches are gone from `CheckIntrinsics`,
+  `MultiReleaseMemCopy`, `MultiReleaseTextDecoding` and `StackWalkUtil`, and
+  `Pointer.Default.address` is final again. S8TNLib compiles for Java 21.
+- `TessellatorManager` creates a thread's main capture buffers on first use
+  and frees them once the thread is unreachable. They had leaked since
+  `actinium@ddb017f1`.
+- `compat/Mods` and `util/font/IFontParameters` moved to Demonica
+  ([ledger](#dropdemonica-only)).
+- New tests: `bytebuf/PointerBufferTest`, `bytebuf/StackWalkUtilTest` and
+  `client/renderer/TessellatorManagerBuffersTest`.
 
 ## What is kept
 
@@ -81,9 +134,11 @@ at `4a19c959` reaches the same 60.
 - `PostProcessingBridge` stays although its pipeline goes. Demonica's Iris tree
   reads the lightmap and night-vision values through it, and
   `com.demonica.Demonica` sets its providers.
-- Two kept types serve only Demonica, and nothing inside GTNHLib uses them:
-  `compat/Mods` (used by 10 root and 2 `shader` files) and
-  `util/font/IFontParameters` (implemented by `MixinFontRenderer`).
+- Two of the kept types served only Demonica, and nothing inside GTNHLib used
+  them: `compat/Mods` (used by 10 root and 2 `shader` files) and
+  `util/font/IFontParameters` (implemented by `MixinFontRenderer`). In 0.2.0
+  they moved to Demonica ([ledger](#dropdemonica-only)), so the tree keeps 58
+  files: 55 that upstream has, and Actinium's 3.
 
 ## Path map
 
@@ -118,13 +173,16 @@ scope's root, so it matches across layouts.
 
 | Scope | Files | Layouts |
 |---|---|---|
-| `gtnhlib` | the 60 kept main files, `KEPT` in the script | all four |
+| `gtnhlib` | the 60 files kept at the syncline, `KEPT` in the script | all four |
 | `tests` | Actinium's `MemoryUtilitiesTest` and `TessellatorManagerTest` | `upstream`, `actinium`, `s8tnlib` |
 | `upstream-tests` | upstream's `VertexFormatTest`, while it is kept | `upstream`, `s8tnlib` |
 | `main` | every main source file, for the classification manifest | all four |
 
 - `gtnhlib`, `tests` and `upstream-tests` restrict both sides to the same
   paths, so `--expect-identical` ignores whatever else a tree carries.
+- The `gtnhlib` scope equals Demonica's only up to `v0.1.1`, so gates 1 and 2
+  name their tags with `--b-ref`. `tests` and `upstream-tests` still hold at
+  `HEAD`.
 - Demonica never vendored GTNHLib's tests, so `tests` is audited against
   Actinium only.
 - `--ledger` checks the [drop ledger](#drop-ledger), as committed at
@@ -139,14 +197,18 @@ ACT=4a19c95952cb9710211d29bec3440e752b6a2d03
 DEM=61fa479dcfd00e39b92bdeb84f03c5ec693f6a6f
 
 # Gate 1, at the Actinium checkpoint: the kept files and tests equal Actinium's.
-scripts/provenance_audit.py --scope gtnhlib --a-ref $ACT --a-layout actinium --expect-identical
+scripts/provenance_audit.py --scope gtnhlib --a-ref $ACT --a-layout actinium \
+    --b-ref actinium-checkpoint/4a19c959 --expect-identical
 scripts/provenance_audit.py --scope tests --a-ref $ACT --a-layout actinium --expect-identical
 
 # Gate 2, at the syncline: the kept files equal Demonica's.
-scripts/provenance_audit.py --scope gtnhlib --a-ref $DEM --a-layout demonica --expect-identical
+scripts/provenance_audit.py --scope gtnhlib --a-ref $DEM --a-layout demonica --b-ref v0.1.1 --expect-identical
 
 # VertexFormatTest is still upstream's.
 scripts/provenance_audit.py --scope upstream-tests --expect-identical
+
+# What S8TNLib changed since the syncline:
+scripts/provenance_audit.py --scope main --a-ref v0.1.1 --a-layout s8tnlib
 
 # What S8TNLib changed relative to the base, and the ledger check, on staged
 # files before a commit and on HEAD after it:
@@ -178,7 +240,8 @@ unchanged.
 | `dev` | buildable states only; tracks `origin/dev` |
 | `main` | blessed states: it only fast-forwards to a tagged release |
 | `port/1.12.2-cleanroom` | the port series, merged to `dev` at the syncline |
-| `sync/demonica-<sha>` | a later Demonica change to GTNHLib, until it merges |
+| `release/<version>` | a release's commits, from `dev`. Its tip is the release commit, which `v<version>` tags; it merges into `dev` with `--no-ff`, and `main` fast-forwards to the tag |
+| `sync/demonica-<sha>` | obsolete: a later Demonica change to `GTNHLib/`, until it merged. Demonica removed `GTNHLib/` before one was needed |
 
 ## Remotes
 
@@ -215,19 +278,21 @@ git fetch --multiple upstream actinium demonica
 | `s8tnlib-source/61fa479d` | Demonica | the syncline. It keeps `61fa479d`, `1511a6bd` and `3d0db995` reachable if Demonica's history is rewritten, and is pushed only with the maintainer's go-ahead |
 | `actinium-checkpoint/4a19c959` | S8TNLib | the commit whose kept files and tests equal Actinium's |
 | `demonica-syncline/61fa479d` | S8TNLib | the merge to `dev` whose kept files equal Demonica's |
-| `v<version>` | S8TNLib | a release, such as `v0.1.0` and `v0.1.1` |
+| `v<version>` | S8TNLib | a release, such as `v0.1.0`, `v0.1.1` and `v0.2.0` |
 
 Release tags start with `v` because upstream's version tags, `0.1.0` among
 them, are already in this repository. The Maven coordinates are
 `com.s8tnlib:s8tnlib`, at `0.1.0-SNAPSHOT` during the port and `0.1.0` at the
 syncline. `0.1.1` has 0.1.0's classes: it is the first GitHub release, cut
-once the license was recorded. After a release, `dev` moves to the next
-`-SNAPSHOT`.
+once the license was recorded. `0.2.0` is the first release after the
+syncline ([After the syncline](#after-the-syncline)). After a release, `dev`
+moves to the next `-SNAPSHOT`.
 
 ## Commits
 
 - Subjects start with `build:`, `port(<area>):`, `drop(<subsystem>):`,
-  `docs:`, `tools:` or `ci:`. Bodies are bulleted.
+  `docs:`, `tools:` or `ci:`, and, for S8TNLib's own changes after the
+  syncline, `fix(<area>):` or `refactor(<area>):`. Bodies are bulleted.
 - A mechanical commit calls out every hunk in it that is not mechanical.
 - A commit that changes files the build does not compile yet says which
   commit first compiles them.
@@ -235,7 +300,9 @@ once the license was recorded. After a release, `dev` moves to the next
   - `Ported-From: actinium@<full sha>` or `Ported-From: demonica@<full sha>`,
     one per source commit;
   - `Baseline: gtnhlib-base/9644810c00` where the change is measured against
-    the base.
+    the base;
+  - `Moved-To: demonica@<full sha>`, the Demonica commit that took a file's
+    content, on the commit that removes the file.
 
 `git log --grep=Ported-From` lists the ported commits.
 
@@ -247,10 +314,11 @@ once the license was recorded. After a release, `dev` moves to the next
   `com.gtnewhorizon.gtnhlib.asm` exclusion, `DisplayListManager` in
   `startsWith("com.gtnewhorizon.gtnhlib.")`, and `verifyDistributedJar` in its
   required entries.
-- **Write kept files from git objects,** as in
+- **Write ported files from git objects,** as in
   `git show <sha>:GTNHLib/src/main/java/<file> > src/main/java/<file>`, and
   never save one through an editor. `.editorconfig` trims trailing whitespace,
-  and `ColorU8` has two lines of it.
+  and `ColorU8` has two lines of it. S8TNLib's own changes after the syncline
+  touch only the lines they need.
 - **No formatter in the build.** Formatting would break blob identity.
 - **Read Demonica through refs, never through its working tree.** Other work
   happens in Demonica's checkout, which may be on any branch.
@@ -279,7 +347,8 @@ headers still govern their files
 `LICENSE` because GitHub's license detection reads that name first. The
 decision came after `v0.1.0`, whose tree still calls the question open and
 has GTNHLib's `LICENSE.txt` only. `v0.1.1` re-releases the same classes from
-a tree that carries the decision.
+a tree that carries the decision. S8TNLib's own changes after the syncline
+are made under GPL-3.0.
 
 ## Port frontier
 
@@ -324,6 +393,9 @@ with two columns:
   - **Removed by Actinium:** `removed by actinium@<sha>`. These are the 9 files
     that Actinium's dead-code commits deleted (`b6c98b8b`, `1a65c496`,
     `303b9789`). Restore the last 1.12.2 version from that commit's parent.
+  - **Moved to Demonica:** `moved to Demonica: <class>`, the Demonica class
+    that took the file's content, with only its package line changed. Restore
+    the last S8TNLib version from `v0.1.1`.
 
 `scripts/provenance_audit.py --ledger` checks the rows against the tree
 ([Scopes and audits](#scopes-and-audits)).
@@ -562,3 +634,10 @@ with two columns:
 | `src/test/java/com/gtnewhorizon/gtnhlib/client/renderer/DirectTessellatorTest.java` | 1.7.10-only: drives DirectTessellator through the 1.7.10 Tessellator API, which it no longer extends. Actinium never carried it |
 | `src/test/java/com/gtnewhorizon/gtnhlib/client/renderer/PrimitiveExtractorTest.java` | 1.7.10-only: tests PrimitiveExtractor, which actinium@b6c98b8b removed. Actinium never carried it |
 | `src/test/java/com/gtnewhorizon/gtnhlib/test/client/renderer/TessellatorManagerTest.java` | 1.7.10-only: tests upstream TessellatorManager's capture API, which the direct-capture core replaces. Actinium never carried it |
+
+### drop(demonica-only)
+
+| File | Reason |
+|---|---|
+| `src/main/java/com/gtnewhorizon/gtnhlib/compat/Mods.java` | moved to Demonica: `com.demonica.compat.Mods`, in its `:shader` project, at demonica@55c51cdf |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/font/IFontParameters.java` | moved to Demonica: `com.demonica.render.font.IFontParameters`, at demonica@b93f3130 |

@@ -8,16 +8,13 @@ import org.lwjgl.system.MemoryUtil;
  * String decoding utilities.
  *
  * <p>
- * On Java 9 different implementations are used that work better with compat strings (JEP 254).
+ * They delegate to LWJGL's {@link MemoryUtil}, which decodes into compact strings (JEP 254) directly. S8TNLib
+ * compiles for Java 21, so the {@code classVersion()} marker of the multi-release variants is gone.
  * </p>
  */
 final class MultiReleaseTextDecoding {
 
     private MultiReleaseTextDecoding() {}
-
-    public static int classVersion() {
-        return Runtime.version().feature() >= 17 ? 17 : 8;
-    }
 
     /** @see MemoryUtilities#memUTF8(ByteBuffer, int, int) */
     static String decodeUTF8(long source, int length) {

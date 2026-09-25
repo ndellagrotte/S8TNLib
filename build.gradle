@@ -176,6 +176,10 @@ tasks.withType(JavaCompile).configureEach {
 tasks.named('test', Test).configure {
     useJUnitPlatform()
     jvmArgs '--enable-native-access=ALL-UNNAMED', '--sun-misc-unsafe-memory-access=allow'
+    // LWJGL's debug allocator tracks every native allocation, so TessellatorManagerBuffersTest can count a thread's
+    // live buffers through MemoryUtil.memReport. At the test JVM's exit it also prints a note for each allocation
+    // still live, which does not fail the build.
+    systemProperty 'org.lwjgl.util.DebugAllocator', 'true'
 }
 
 /*
@@ -205,7 +209,8 @@ def s8tnlibCommit = gitOutput(['git', 'rev-parse', 'HEAD'])
         status.isEmpty() ? commit : "${commit}-dirty".toString()
     }
 
-// Where the kept files came from: the upstream base, and the Demonica commit they equal (docs/PROVENANCE.md).
+// Where the kept files came from: the upstream base, and the Demonica commit S8TNLib last synced from, which the
+// kept files equal up to 0.1.1 (docs/PROVENANCE.md).
 def s8tnlibManifest = [
     'S8TNLib-Base': "gtnhlib@${property('s8tnlib_base')}".toString(),
     'S8TNLib-Synced-From': "demonica@${property('s8tnlib_synced_from')}".toString()
