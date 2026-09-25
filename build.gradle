@@ -205,7 +205,8 @@ def s8tnlibCommit = gitOutput(['git', 'rev-parse', 'HEAD'])
         status.isEmpty() ? commit : "${commit}-dirty".toString()
     }
 
-// Where the kept files came from: the upstream base, and the Demonica commit they equal (docs/PROVENANCE.md).
+// Where the kept files came from: the upstream base, and the Demonica commit S8TNLib last synced from, which the
+// kept files equal up to 0.1.1 (docs/PROVENANCE.md).
 def s8tnlibManifest = [
     'S8TNLib-Base': "gtnhlib@${property('s8tnlib_base')}".toString(),
     'S8TNLib-Synced-From': "demonica@${property('s8tnlib_synced_from')}".toString()

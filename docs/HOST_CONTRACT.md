@@ -20,8 +20,8 @@ how Demonica does it.
 - **The POM and the Gradle module metadata** declare no dependencies.
 - **Both manifests** say where the jar comes from:
   - `S8TNLib-Base`: the upstream GTNHLib commit, `gtnhlib@9644810c…`;
-  - `S8TNLib-Synced-From`: the Demonica commit that the kept files equal,
-    `demonica@61fa479d…`;
+  - `S8TNLib-Synced-From`: the Demonica commit S8TNLib last synced from,
+    `demonica@61fa479d…`. The kept files equal it up to 0.1.1;
   - `S8TNLib-Commit`: the S8TNLib commit the jar was built from, with
     `-dirty` if tracked files had uncommitted changes. A host can pin it.
 

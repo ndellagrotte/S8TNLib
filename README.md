@@ -14,9 +14,10 @@ Minecraft 1.12.2 on Cleanroom, for
   model types, the `bytebuf` memory utilities, and two types that only
   Demonica uses. Every other upstream file is dropped, with its reason
   recorded.
-- **It equals Demonica's copy.** In 0.1.1, every kept file is byte-identical
-  to Demonica's `GTNHLib/` at `demonica@61fa479d`, and a blob-SHA audit
-  proves it.
+- **It equaled Demonica's copy up to 0.1.1.** In `v0.1.0` and `v0.1.1`, every
+  kept file is byte-identical to Demonica's `GTNHLib/` at
+  `demonica@61fa479d`, and a blob-SHA audit proves it. Demonica has had no
+  `GTNHLib/` since, so from 0.2.0 on S8TNLib changes on its own.
 
 [`docs/PROVENANCE.md`](docs/PROVENANCE.md) records where each file comes
 from, what was dropped and why, and how the audit works.
