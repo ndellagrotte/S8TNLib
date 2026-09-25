@@ -333,7 +333,7 @@ public final class APIUtil {
             pointers.put(address);
         }
 
-        return memAddress(pointers);
+        return pointers.address0();
     }
 
     /**
@@ -353,7 +353,7 @@ public final class APIUtil {
             pointers.put(memAddress(buffer));
         }
 
-        return memAddress(pointers);
+        return pointers.address0();
     }
 
     /**
@@ -401,7 +401,7 @@ public final class APIUtil {
             pointers.put(memAddress(encoder.encode(s, true)));
         }
 
-        return memAddress(pointers);
+        return pointers.address0();
     }
 
     /**
@@ -431,7 +431,7 @@ public final class APIUtil {
             lengths.put(buffer.capacity());
         }
 
-        return memAddress(pointers);
+        return pointers.address0();
     }
 
     /**
@@ -460,7 +460,7 @@ public final class APIUtil {
             lengths.put(buffer.capacity());
         }
 
-        return memAddress(pointers);
+        return pointers.address0();
     }
 
     /**
