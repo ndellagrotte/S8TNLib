@@ -8,8 +8,9 @@ S8TNLib ports [GTNHLib](https://github.com/GTNewHorizons/GTNHLib) to Minecraft
 ## Charter
 
 - **Demonica is the only consumer.**
-  [Demonica](https://github.com/ndellagrotte/Demonica) merges the S8TNLib jar
-  into its mod jar and remaps the result.
+  [Demonica](https://github.com/ndellagrotte/Demonica) requires S8TNLib as a
+  separate mod, which players install next to it; up to 0.2.0 it merged
+  S8TNLib's jar into its own.
   [`HOST_CONTRACT.md`](HOST_CONTRACT.md) lists what Demonica supplies.
 - **The code comes from Actinium.** The `GTNHLib/` project of
   [Actinium](https://github.com/DHJComical/Actinium) is the only 1.12.2 port
@@ -338,8 +339,9 @@ moves to the next `-SNAPSHOT`.
   and Demonica's copies depends on it. Demonica also matches the package name
   as a string: `GLSMRedirector` in its `UNIVERSAL_VAO` constant and its
   `com.gtnewhorizon.gtnhlib.asm` exclusion, `DisplayListManager` in
-  `startsWith("com.gtnewhorizon.gtnhlib.")`, and `verifyDistributedJar` in its
-  required entries.
+  `startsWith("com.gtnewhorizon.gtnhlib.")`, `Environment` in the resource
+  that tells whether S8TNLib is installed, and `verifyDistributedJar`, which
+  keeps the package out of Demonica's jar.
 - **Write ported files from git objects,** as in
   `git show <sha>:GTNHLib/src/main/java/<file> > src/main/java/<file>`, and
   never save one through an editor. `.editorconfig` trims trailing whitespace,

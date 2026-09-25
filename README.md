@@ -2,7 +2,8 @@
 
 S8TNLib is [GTNHLib](https://github.com/GTNewHorizons/GTNHLib) ported to
 Minecraft 1.12.2 on Cleanroom, for
-[Demonica](https://github.com/ndellagrotte/Demonica).
+[Demonica](https://github.com/ndellagrotte/Demonica). It is a mod that
+players install: Demonica requires it.
 
 - **The code comes from Actinium.** The `GTNHLib/` project of
   [Actinium](https://github.com/DHJComical/Actinium) is the only 1.12.2 port
@@ -23,17 +24,24 @@ Minecraft 1.12.2 on Cleanroom, for
 [`docs/PROVENANCE.md`](docs/PROVENANCE.md) records where each file comes
 from, what was dropped and why, and how the audit works.
 
+## Installing
+
+Put `s8tnlib-<version>.jar` from the
+[GitHub releases](https://github.com/ndellagrotte/S8TNLib/releases) in
+`mods/`, next to Celeritas and Demonica. Demonica names the version it
+needs. S8TNLib does nothing by itself.
+
 ## The artifact
 
-`com.s8tnlib:s8tnlib:0.2.0`: the jar and its sources jar, published to
-`mavenLocal` only. Each
-[GitHub release](https://github.com/ndellagrotte/S8TNLib/releases) attaches
-the same two jars, built by CI from the release tag.
+Each GitHub release has three assets, which CI builds from the release tag:
+`s8tnlib-<version>.jar`, its sources jar and `SHA256SUMS`. Demonica's build
+downloads the jar from there and pins its SHA-256.
 
-- It is an MCP-named library, not a mod: `com.gtnewhorizon.gtnhlib` classes
-  only, with no mod metadata, mixins, access transformer or dependencies.
-- The host merges it into its mod jar and remaps that. It never goes on the
-  app class path, and its package is never relocated.
+- The jar is a mod, remapped to SRG: the `com.gtnewhorizon.gtnhlib` classes,
+  a mod (`s8tnlib`) and a loading plugin that do nothing, `mcmod.info`, and
+  the license files. Its manifest makes it a coremod that also contains a
+  mod, so Cleanroom loads it early enough for Demonica's coremod code.
+- It never goes on the app class path, and its package is never relocated.
 
 [`docs/HOST_CONTRACT.md`](docs/HOST_CONTRACT.md) lists what the host
 supplies: the Minecraft-side hooks, the providers and the runtime libraries.
@@ -42,8 +50,11 @@ supplies: the Minecraft-side hooks, the providers and the runtime libraries.
 
 ```sh
 ./gradlew build                  # compiles, runs the tests, and builds and verifies the jars
-./gradlew publishToMavenLocal    # publishes com.s8tnlib:s8tnlib to mavenLocal
+./gradlew publishToMavenLocal    # publishes com.s8tnlib:s8tnlib to mavenLocal, for local experiments
 ```
+
+`build/libs/s8tnlib-<version>.jar` is the jar to install. Demonica's build
+takes a local build with `-Ps8tnlibDir=<S8TNLib>/build/libs`.
 
 The build runs on JDK 25, which Gradle provisions if it is missing, and
 compiles for Java 21. It needs git: each jar's manifest records the commit it
