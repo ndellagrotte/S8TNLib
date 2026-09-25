@@ -16,10 +16,12 @@ S8TNLib ports [GTNHLib](https://github.com/GTNewHorizons/GTNHLib) to Minecraft
   of GTNHLib. Actinium imported it in one commit, together with unrelated work
   (`actinium@83ea1b7c`), and kept changing it afterwards. S8TNLib replays that
   work theme by theme, and each commit names the Actinium commits it ports.
-- **What Demonica doesn't reach is dropped.** S8TNLib keeps the 60 main files
-  that Demonica's code reaches, Actinium's 2 GTNHLib tests, and upstream's
-  `VertexFormatTest` if it passes unmodified. Everything else is dropped, one
-  labeled commit per subsystem, and recorded in the [drop ledger](#drop-ledger).
+- **What Demonica doesn't reach is dropped.** S8TNLib kept the 60 main files
+  that Demonica's code reached at the syncline, Actinium's 2 GTNHLib tests,
+  and upstream's `VertexFormatTest` if it passes unmodified. Everything else
+  is dropped, one labeled commit per subsystem, and recorded in the
+  [drop ledger](#drop-ledger). Two of the 60 moved to Demonica in 0.2.0, so
+  58 remain.
 - **The syncline is exact.** At the syncline, every kept main file is
   byte-identical to Demonica's copy and every kept test to its source. A
   [blob-SHA audit](#scopes-and-audits) proves it, at `v0.1.0` and `v0.1.1`.
@@ -110,9 +112,11 @@ at `4a19c959` reaches the same 60.
 - `PostProcessingBridge` stays although its pipeline goes. Demonica's Iris tree
   reads the lightmap and night-vision values through it, and
   `com.demonica.Demonica` sets its providers.
-- Two kept types serve only Demonica, and nothing inside GTNHLib uses them:
-  `compat/Mods` (used by 10 root and 2 `shader` files) and
-  `util/font/IFontParameters` (implemented by `MixinFontRenderer`).
+- Two of the kept types served only Demonica, and nothing inside GTNHLib used
+  them: `compat/Mods` (used by 10 root and 2 `shader` files) and
+  `util/font/IFontParameters` (implemented by `MixinFontRenderer`). In 0.2.0
+  they moved to Demonica ([ledger](#dropdemonica-only)), so the tree keeps 58
+  files: 55 that upstream has, and Actinium's 3.
 
 ## Path map
 
@@ -607,3 +611,10 @@ with two columns:
 | `src/test/java/com/gtnewhorizon/gtnhlib/client/renderer/DirectTessellatorTest.java` | 1.7.10-only: drives DirectTessellator through the 1.7.10 Tessellator API, which it no longer extends. Actinium never carried it |
 | `src/test/java/com/gtnewhorizon/gtnhlib/client/renderer/PrimitiveExtractorTest.java` | 1.7.10-only: tests PrimitiveExtractor, which actinium@b6c98b8b removed. Actinium never carried it |
 | `src/test/java/com/gtnewhorizon/gtnhlib/test/client/renderer/TessellatorManagerTest.java` | 1.7.10-only: tests upstream TessellatorManager's capture API, which the direct-capture core replaces. Actinium never carried it |
+
+### drop(demonica-only)
+
+| File | Reason |
+|---|---|
+| `src/main/java/com/gtnewhorizon/gtnhlib/compat/Mods.java` | moved to Demonica: `com.demonica.compat.Mods`, in its `:shader` project, at demonica@55c51cdf |
+| `src/main/java/com/gtnewhorizon/gtnhlib/util/font/IFontParameters.java` | moved to Demonica: `com.demonica.render.font.IFontParameters`, at demonica@b93f3130 |

@@ -9,11 +9,11 @@ Minecraft 1.12.2 on Cleanroom, for
   of GTNHLib. S8TNLib replays that work on upstream's history as a series of
   reviewable commits, and its port commits name the Actinium commits they
   take.
-- **It keeps what Demonica uses.** That is 60 source files: the renderer's
+- **It keeps what Demonica uses.** That is 58 source files: the renderer's
   direct-capture tessellator, vertex formats, VAO and VBO helpers and quad
-  model types, the `bytebuf` memory utilities, and two types that only
-  Demonica uses. Every other upstream file is dropped, with its reason
-  recorded.
+  model types, and the `bytebuf` memory utilities. Every other upstream file
+  is dropped, with its reason recorded. Two types that only Demonica used
+  moved to Demonica in 0.2.0.
 - **It equaled Demonica's copy up to 0.1.1.** In `v0.1.0` and `v0.1.1`, every
   kept file is byte-identical to Demonica's `GTNHLib/` at
   `demonica@61fa479d`, and a blob-SHA audit proves it. Demonica has had no

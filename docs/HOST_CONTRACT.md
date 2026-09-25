@@ -12,11 +12,11 @@ how Demonica does it.
 `./gradlew publishToMavenLocal` publishes `com.s8tnlib:s8tnlib` to
 `mavenLocal`, and nowhere else.
 
-- **The jar** holds the classes of the 60 kept files, all in
+- **The jar** holds the classes of the 58 kept files, all in
   `com.gtnewhorizon.gtnhlib`, and a manifest. It has no mod metadata, mixin
   configs, access transformer, nested jars, FML manifest attributes or
   notices at its root.
-- **The sources jar** holds the 60 source files.
+- **The sources jar** holds the 58 source files.
 - **The POM and the Gradle module metadata** declare no dependencies.
 - **Both manifests** say where the jar comes from:
   - `S8TNLib-Base`: the upstream GTNHLib commit, `gtnhlib@9644810c…`;
@@ -56,7 +56,6 @@ which the host's runtime provides:
 | Library | Used by | Notes |
 |---|---|---|
 | Minecraft 1.12.2, client | `TessellatorManager`: `Tessellator`, `BufferBuilder`, `VertexFormat`, `VertexFormatElement`. `PostProcessingBridge` and `DepthTextureProvider`: `EntityRenderer`, `DynamicTexture`, `Framebuffer`, `EntityLivingBase`. `ModelQuadFacing`: `EnumFacing` | MCP names, remapped with the mod jar |
-| Cleanroom | `compat/Mods`: `com.cleanroommc.discovery.CleanroomModDiscoverer` | S8TNLib compiles against `0.6.12-alpha`, the minimum |
 | LWJGL 3, core and OpenGL | `bytebuf`: `MemoryUtil`, `PointerBuffer`, `CustomBuffer`, `BufferUtils`, `Platform`, `Pointer`. `GLCaps`, `UniversalVAO`, `vao`, `vbo` and `vertex`: `GL11` to `GL44`, `EXTFramebufferObject` | Compiled against 3.4.1. `bytebuf/Pointer` avoids `Platform.Architecture.is64Bit()`, which LWJGL 3.3 lacks, because Cleanroom ships 3.3.x at runtime, as its comment says |
 | lwjglx | `GLCaps`, `UniversalVAO`: `GLContext`, `ContextCapabilities` | Cleanroom's LWJGL 2 compatibility layer |
 | JOML | `NormI8`, `VertexFormat` and the vertex writers: `Vector3f`, `Matrix4fc`, `Math` | 1.10.9, Cleanroom's copy |
@@ -99,13 +98,6 @@ instead, so the host routes those draws into the capture.
   calls. Neither S8TNLib nor Demonica calls `discard()` or sets the
   deprecated compiling flag.
 
-### Fonts
-
-Demonica's `com.demonica.mixin.fontrenderer.MixinFontRenderer` implements
-`IFontParameters` on `FontRenderer`. Its six `demonica$` methods report the
-glyph scale, spacing, whitespace scale, shadow offset and fine character
-width of Demonica's batched font renderer. Nothing in S8TNLib calls them.
-
 ### Providers
 
 `com.demonica.Demonica.onConstruct`, on FML's construction event, sets them
@@ -126,10 +118,17 @@ Iris tree, in `net.coderbot.iris.rendertarget`. Nothing in S8TNLib reads the
 is dropped. Demonica's Iris tree reads `getLightmapTexture` and
 `getNightVisionBrightness`.
 
-### Mod presence
+### Moved to Demonica
 
-`compat/Mods` answers from `CleanroomModDiscoverer`, whose scan runs during
-`CoreModManager#handleLaunch`, before any mod class loads. Its flags are
-therefore safe to read from any mod code, mixins included. Its class javadoc
-lists where the answer differs from `Loader#isModLoaded`. Demonica reads the
-flags in 10 root and 2 `shader` files, and nothing in S8TNLib does.
+Two types that only Demonica used lived in S8TNLib up to 0.1.1, and are
+Demonica's own since 0.2.0, with only their package lines changed:
+
+- `util/font/IFontParameters`, the interface that Demonica's
+  `MixinFontRenderer` implements on `FontRenderer`, is
+  `com.demonica.render.font.IFontParameters` (`demonica@b93f3130`).
+- `compat/Mods`, the mod-presence flags answered from Cleanroom's
+  `CleanroomModDiscoverer`, is `com.demonica.compat.Mods` in Demonica's
+  `:shader` project (`demonica@55c51cdf`).
+
+Nothing in S8TNLib referenced either, and no class of S8TNLib's uses
+Cleanroom's own classes any more.
